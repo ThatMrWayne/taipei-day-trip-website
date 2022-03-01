@@ -43,25 +43,27 @@ query_2 = ("INSERT INTO image "
 
 
 try:
-    for s in data['result']['results']:
+    #s是景點資料
+    s = data['result']['results']
+    for i in range(len(s)):
         input_data_1 = {
-            "id":s['_id'],
-            "name":s['stitle'],
-            "category":s['CAT2'],
-            "description":s['xbody'],
-            "address":s['address'],
-            "transport":s['info'],
-            "mrt":s['MRT'],
-            "latitude":s['latitude'],
-            "longitude":s['longitude']
+            "id":i+1,
+            "name":s[i]['stitle'],
+            "category":s[i]['CAT2'],
+            "description":s[i]['xbody'],
+            "address":s[i]['address'],
+            "transport":s[i]['info'],
+            "mrt":s[i]['MRT'],
+            "latitude":s[i]['latitude'],
+            "longitude":s[i]['longitude']
         }      
         input_data_2={
-            "sight_id":s['_id'],
+            "sight_id":i+1,
             "img_url":None,
         }
         #儲存該景點所有圖片網址在list裡
         image_url=[]
-        for url in s['file'].split('https'):
+        for url in s[i]['file'].split('https'):
             url_lwr = url.lower()
             if url_lwr.endswith('jpg') or url_lwr.endswith('png'): #過濾出jpg,png檔
                 image_url.append('https'+url)

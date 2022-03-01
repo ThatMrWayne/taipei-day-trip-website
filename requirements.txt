@@ -3,7 +3,7 @@ Flask==2.0.3
 itsdangerous==2.1.0
 Jinja2==3.0.3
 MarkupSafe==2.1.0
-mysql-connector-python==8.0.28
+mysql-connector-python==8.0.26
 protobuf==3.19.4
 python-dotenv==0.19.2
 Werkzeug==2.0.3

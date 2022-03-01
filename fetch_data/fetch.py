@@ -8,15 +8,10 @@ fetch = Blueprint('fetch',__name__,static_folder='static',static_url_path='/fetc
 
 
 @fetch.route('/api/attractions',methods=['GET'])
-def get_attarction():
+def get_attraction():
     page = request.args.get('page')
     keyword = request.args.get('keyword')
-    if not page or not page.isdigit():
-        response_msg={
-                      "error":True,
-                      "message":"Ethier query string 'page' is missed or invalid input is passed."}
-        res=make_response(response_msg,500)
-    elif page.isdigit():
+    if not page or page.isdigit():              
         data = db.get_attrac_page(page,keyword)
         if type(data) is str:
             response_msg={
@@ -25,9 +20,38 @@ def get_attarction():
             res=make_response(response_msg,500)
         else:    
             response_msg = json.dumps(data,ensure_ascii=False)
-            res=make_response(response_msg,200)              
+            res=make_response(response_msg,200)
+    elif not page.isdigit():
+        response_msg={
+                      "nextPage":None,
+                      "data":[]}
+        res=make_response(response_msg,200)              
     res.headers['Content-Type']='application/json'
-    return res   
+    return res
+
+
+@fetch.route('/api/attraction/<attractionID>',methods=["GET"])
+def get_attraction_id(attractionID):
+    if not attractionID.isdigit():
+        response_msg = {
+            "error": True,
+            "message": "景點編號不正確"}
+        res = make_response(response_msg, 400)
+    else:
+        data = db.get_attrac_by_id(attractionID)
+        if type(data) is str:
+            response_msg = {
+                "error": True,
+                "message": "Data base failed."}
+            res = make_response(response_msg, 500)
+        else:
+            response_msg = json.dumps(data,ensure_ascii=False)
+            res=make_response(response_msg,200) 
+        res.headers['Content-Type']='application/json'
+    return res       
+        
+
+
     
 
 

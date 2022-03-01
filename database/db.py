@@ -8,8 +8,8 @@ class DataBase():
     def __init__(self):
         try:
             config = {
-                'user': MYSQL_PASSWORD,
-                'password': MYSQL_USER,
+                'user': MYSQL_USER,
+                'password': MYSQL_PASSWORD,
                 'host': '127.0.0.1',
                 'database': 'website',
                 'raise_on_warnings': True,

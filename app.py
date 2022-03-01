@@ -1,5 +1,11 @@
 from flask import *
+from fetch_data import fecth_blueprint
+import config
+
 app=Flask(__name__)
+app.config.from_object(config.DevelopmentConfig)
+app.register_blueprint(fecth_blueprint)
+
 app.config["JSON_AS_ASCII"]=False
 app.config["TEMPLATES_AUTO_RELOAD"]=True
 
@@ -17,4 +23,4 @@ def booking():
 def thankyou():
 	return render_template("thankyou.html")
 
-app.run(port=3000)
+app.run(host='0.0.0.0',port=3000)

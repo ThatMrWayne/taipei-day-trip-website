@@ -26,10 +26,11 @@ class DataBase():
             exit(1)
 
     def get_attrac_page(self,page,keyword=None):
-        msg,sight_data = None,None
+        msg,sight_data,nextPage = None,None,None
         #取得連線
         try:
-            cnx = self.cnxpool.get_connection()
+            cnx1 = self.cnxpool.get_connection()
+            cnx2 = self.cnxpool.get_connection()
         except mysql.connector.Error as err:
             print(err)
             return(err.msg)
@@ -41,14 +42,16 @@ class DataBase():
             end_id = 12
         start_id = (end_id-12)+1        
 
-        cursor = cnx.cursor(dictionary=True)
+        cursor1= cnx1.cursor(dictionary=True)
+        cursor2 = cnx2.cursor(dictionary=True)
         try:
             if keyword:
                 #先篩選出有關鍵字的景點
-                query = ("SELECT * FROM sight WHERE name LIKE %(keyword)s ORDER BY id")
-                input_data={'keyword' : f'%{keyword}%'}
-                cursor.execute(query,input_data)
-                data = cursor.fetchall()
+                query = ("SELECT * FROM sight WHERE name LIKE %(key)s ORDER BY id")
+                input_data={'key' : '%'+keyword+'%'}
+                print(input_data['key'])
+                cursor1.execute(query,input_data)
+                data = cursor1.fetchall()
                 if data:
                     #根據page取出篩選資料中的12筆資料
                     sight_data = data[start_id-1:start_id-1+12]#可能是空的[]
@@ -59,21 +62,30 @@ class DataBase():
                     'start': start_id,
                     'end': end_id
                 }
-                cursor.execute(query,input_data)
-                sight_data = cursor.fetchall() #可能是空的[]
+                cursor1.execute(query,input_data)
+                sight_data = cursor1.fetchall() #可能是空的[]
+
             #確定有無下一頁
-            next_page = {'next':end_id+1}
-            cursor.execute("select name from sight where id = %(next)s",next_page)
-            if not cursor.fetchall():
-                nextPage=None
+            if keyword:
+                try:
+                    next_item = data[start_id-1+12]
+                    nextPage = page+1
+                except IndexError:
+                    nextPage = None    
             else:
-                nextPage = (end_id//12)
+                next_page = {'next':end_id+1}
+                cursor2.execute("select name from sight where id = %(next)s",next_page)
+                if not cursor2.fetchall():
+                    nextPage=None
+                else:
+                    nextPage = (end_id//12)
+
             ##如果有資料才去搜尋圖片url
             if sight_data:
                 ids = tuple([d['id'] for d in sight_data])
                 img_query=f"SELECT sight_id, url from image where sight_id in {ids}"
-                cursor.execute(img_query)
-                img_data = cursor.fetchall()    
+                cursor2.execute(img_query)
+                img_data = cursor2.fetchall()    
                 for i in range(len(sight_data)):
                     sight_id = sight_data[i].get('id')
                     sight_data[i]['images']=[row.get('url') for row in img_data if row['sight_id']==sight_id]
@@ -87,8 +99,10 @@ class DataBase():
             print(err)
             msg = err.msg      
         finally:
-            cursor.close()
-            cnx.close()   
+            cursor1.close()
+            cursor2.close()
+            cnx1.close()   
+            cnx2.close()
             if msg:
                 return msg
             else:

@@ -29,8 +29,7 @@ class DataBase():
         msg,sight_data,nextPage = None,None,None
         #取得連線
         try:
-            cnx1 = self.cnxpool.get_connection()
-            cnx2 = self.cnxpool.get_connection()
+            cnx = self.cnxpool.get_connection()
         except mysql.connector.Error as err:
             print(err)
             return(err.msg)
@@ -42,16 +41,14 @@ class DataBase():
             end_id = 12
         start_id = (end_id-12)+1        
 
-        cursor1= cnx1.cursor(dictionary=True)
-        cursor2 = cnx2.cursor(dictionary=True)
+        cursor= cnx.cursor(dictionary=True)
         try:
             if keyword:
                 #先篩選出有關鍵字的景點
                 query = ("SELECT * FROM sight WHERE name LIKE %(key)s ORDER BY id")
                 input_data={'key' : '%'+keyword+'%'}
-                print(input_data['key'])
-                cursor1.execute(query,input_data)
-                data = cursor1.fetchall()
+                cursor.execute(query,input_data)
+                data = cursor.fetchall()
                 if data:
                     #根據page取出篩選資料中的12筆資料
                     sight_data = data[start_id-1:start_id-1+12]#可能是空的[]
@@ -62,8 +59,8 @@ class DataBase():
                     'start': start_id,
                     'end': end_id
                 }
-                cursor1.execute(query,input_data)
-                sight_data = cursor1.fetchall() #可能是空的[]
+                cursor.execute(query,input_data)
+                sight_data = cursor.fetchall() #可能是空的[]
 
             #確定有無下一頁
             if keyword:
@@ -74,8 +71,8 @@ class DataBase():
                     nextPage = None    
             else:
                 next_page = {'next':end_id+1}
-                cursor2.execute("select name from sight where id = %(next)s",next_page)
-                if not cursor2.fetchall():
+                cursor.execute("select name from sight where id = %(next)s",next_page)
+                if not cursor.fetchall():
                     nextPage=None
                 else:
                     nextPage = (end_id//12)
@@ -84,8 +81,8 @@ class DataBase():
             if sight_data:
                 ids = tuple([d['id'] for d in sight_data])
                 img_query=f"SELECT sight_id, url from image where sight_id in {ids}"
-                cursor2.execute(img_query)
-                img_data = cursor2.fetchall()    
+                cursor.execute(img_query)
+                img_data = cursor.fetchall()    
                 for i in range(len(sight_data)):
                     sight_id = sight_data[i].get('id')
                     sight_data[i]['images']=[row.get('url') for row in img_data if row['sight_id']==sight_id]
@@ -99,10 +96,8 @@ class DataBase():
             print(err)
             msg = err.msg      
         finally:
-            cursor1.close()
-            cursor2.close()
-            cnx1.close()   
-            cnx2.close()
+            cursor.close()
+            cnx.close()   
             if msg:
                 return msg
             else:

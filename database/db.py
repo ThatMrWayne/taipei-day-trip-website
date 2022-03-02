@@ -123,6 +123,8 @@ class DataBase():
                 cursor.execute("SELECT url FROM image WHERE sight_id = %(sightid)s ",{"sightid":sightid})
                 img_data = [i['url'] for i in cursor.fetchall()]
                 sight_data[0]['image']=img_data
+                sight_data[0]['latitude']=float(sight_data[0]['latitude'])
+                sight_data[0]['longitude']=float(sight_data[0]['longitude'])
                 result={'data':sight_data[0]}
             else:
                 result={'data':[]}        

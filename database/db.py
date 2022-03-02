@@ -45,9 +45,8 @@ class DataBase():
         try:
             if keyword:
                 #先篩選出有關鍵字的景點
-                query = ("SELECT * FROM sight WHERE name LIKE %(key)s ORDER BY id")
-                input_data={'key' : '%'+keyword+'%'}
-                cursor.execute(query,input_data)
+                query = ("SELECT * FROM sight WHERE name LIKE CONCAT('%',%(key)s,'%') ORDER BY id")
+                cursor.execute(query,{'key':keyword})
                 data = cursor.fetchall()
                 if data:
                     #根據page取出篩選資料中的12筆資料
@@ -79,7 +78,9 @@ class DataBase():
 
             ##如果有資料才去搜尋圖片url
             if sight_data:
-                ids = tuple([d['id'] for d in sight_data])
+                #在query裡放列表給in用
+                ids = [d['id'] for d in sight_data]
+                ids='('+','.join([str(i) for i in ids])+')'
                 img_query=f"SELECT sight_id, url from image where sight_id in {ids}"
                 cursor.execute(img_query)
                 img_data = cursor.fetchall()    

@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/cwtexyen.css">
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>  
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <style>
+        /*body margin設為0*/
+        body{
+            margin: 0px;
+            font-family:"Noto Sans TC", sans-serif;
+            position: relative;
+            min-height: 100vh;
+        }
+        /*section1的部分*/
+        .section-1{
+            display: flex;
+            justify-content:center;
+            align-items: center;
+            width:100%;
+            position:fixed;/*如果設定absolute or fixed會跳脫頁面所以寬度會變成以內容為主所以要設定width:100% ,另外fixed是相對viewport/absolute是相對外層有無設定relative | absolute | fixed | inherit,若無則以body為基準*/
+            top:0px;/*定在頁面上方*/
+            background: white; /*要設定白色要不然往下滑時,下面的內容會透過去選單列*/
+            z-index: 2;/*選單列蓋過下面所有內容*/
+            
+        }
+        /*選單列外容器*/
+        .nav{
+            width:1200px;
+            flex:none;
+            display: flex;
+            justify-content:space-between;
+            align-items: center;
+            padding-top: 9px;
+            padding-bottom: 9px;
+            
+        }
+        .header-1{
+            flex:none;
+            width:150px;
+            font-size:30px;
+            font-weight:bold;
+            color: #448899;
+            margin-right: 10px;
+            margin-left: 10px;
+        }
+        .header-2{
+            flex: auto;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            color:#666666;
+            font-size:16px;
+            font-family:"Noto Sans TC", sans-serif;
+        }
+
+        .header-2 span{
+            font-size:16px;
+        }
+
+        .login,.schedule{
+            flex: none;
+        }
+        .schedule{
+            margin-right: 20px;
+        }
+        .login{
+            margin-right: 10px;
+        }
+        
+        /*section2的部分*/
+        .section-2{
+            margin-top: 60px;/*要設一個margin才不會跟頂部固定的選單列重疊*/
+            background: linear-gradient(135deg, #AADDEE 0%, #66AABB 100%);
+            display:flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+              
+        }
+        
+        .container{
+            width:1200px;
+            flex:none;
+            display: flex;
+            justify-content:space-between;
+            align-items: center;
+        }
+        
+        .search{
+            color:#F8F8F8;
+            flex:none;
+            width:470px;
+            position:relative;
+            z-index: 1;
+            margin-left: 10px;
+        }
+        
+        .search> span:nth-of-type(1){
+            font-size:28px;
+        }
+        
+        .search> span:nth-of-type(2){
+            display:block;
+            font-size:16px;
+            margin-top:15px;
+        }
+        
+        .search>input{
+            box-sizing: border-box;
+            display:inline-block;
+            vertical-align:middle;
+            height:46px;
+            width:400px;
+            margin-top:25px;
+            padding:15px;
+            border-radius: 2px;
+            border:#AABBCC;
+        }
+        
+        .search div{
+            vertical-align:middle;
+            display:inline-block;
+            background-color: #448899;
+            height:46px;
+            width:60px;
+            border-radius:2px;
+            margin-top:25px;
+            text-align: center;
+        }
+        
+        .search img{
+            position:relative;
+            top:50%;
+            transform:translateY(-50%);
+        }
+        
+        .container > img{
+            display:block;
+            position:relative;
+            left:130px;
+            z-index: 0;
+            flex:none;
+            width:650px;
+        }
+        
+        
+
+        @media(max-width:1200px){
+            .nav{flex:auto};/*小於1200px時,選單列寬度要跟螢幕一樣*/
+            .header-1{margin-left: 10px}
+            .container{width:100%}
+           
+        }
+        
+        @media(max-width:1000px){
+            .container{
+                height:280px;
+                align-items: flex-end;
+                justify-content: flex-start;
+            }
+            .container > img{
+                width:60%;
+                left:0px;
+            }
+            .search{
+                top:-50%;
+                transform: translateY(50%)
+            }
+        }
+        
+        @media(max-width:800px){
+            .container>img{
+                left:-150px;
+                width:60%;
+            }
+            .search{
+                width:65%
+            }
+            .search>input{
+                width:75%
+            }
+        }
+
+        @media(max-width:600px){
+            .container > img{
+                left:-165px;
+                width:85%;
+            }
+            .search{
+                width:85%;
+                left: 50%;
+                transform: translateX(-50%) translateY(50%);
+            }
+            .search>input{
+                width:75%
+            }
+        }
+        
+        @media(max-width:360px){
+            .search{
+                width:88%;
+            }
+            .search>input{
+                width:230px;
+            }
+
+        }
+        
+        /*景點顯示部分*/
+        #sights{
+            display:flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 104px;
+            
+        }
+        .outer{
+            /*border:1px solid black;*/
+            flex:none;
+            width:1170px;
+            display: grid;
+            grid-template-columns: repeat(4,270px);
+            grid-gap: 30px;
+            padding-left: 15px;
+            padding-right: 15px;  
+            margin-top:55px;
+            margin-bottom:55px;
+        }
+        
+        .inner{
+            border:1px solid black;
+            border-radius: 5px;
+            background-color: #FFFFFF;
+        }
+        
+        .mark{
+            /*border:1px solid red;*/
+            width:100%
+        }
+
+
+
+      
+        .inner img{
+            display:block;
+            aspect-ratio:1.675;
+            border-top-left-radius:5px;
+            border-top-right-radius:5px;
+            width:100%;
+        } 
+        
+        .txt{
+            width:100%;
+            font-size: 16px;
+            
+        }
+        
+        .t2{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position:relative;
+
+        }
+        
+        .t2>span{
+            flex:auto;
+            /*border:0.5px solid green;*/
+            display:block;
+        }
+        
+        .t1{
+            box-sizing: border-box;
+            width:100%;
+            margin-top: 13px;
+            /*margin-left: 10px;
+            margin-right: 10px;*/
+            margin-bottom: 15px;
+            padding-left: 10px;
+            padding-right: 10px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .t2{
+            margin-bottom: 12px;
+        }
+
+        .t2>span:nth-of-type(1){
+            padding-left: 10px;
+        }
+        
+        
+        .t2>span:nth-of-type(2){
+            text-align: right;
+            padding-right: 10px;
+        }
+        
+        /*圖片部分rwd*/
+        @media(max-width:1200px){
+            .outer{
+            width:90%;
+            grid-template-columns: repeat(2,1fr);
+            grid-gap: 15px; 
+            padding-left: 5px;
+            padding-right: 5px;
+            }
+        }
+
+        @media(max-width:700px){
+            .outer{
+                grid-template-columns: 1fr;  
+            }
+        }
+        
+        .section-4{
+            font-family:"Noto Sans TC", sans-serif;
+            font-size: 16px;
+            color:#FFFFFF;
+            font-weight: bold;
+            background-color: #757575;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 104px;
+            position:absolute;
+            bottom:-104px;
+            width:100%;   
+        }
+        .section-4>span{
+            flex: none;
+            display: block;
+        }
+
+        #btn:hover{
+            cursor: pointer;
+            box-shadow: 1px 1px 2px #448899;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="section-1">
+        <div class="nav">
+            <div class="header-1">
+                台北一日遊
+            </div>
+            <div class="header-2">
+                <div class="schedule">預定行程</div>
+                <div class="login">登入<span style="font-size: 
+                    16px;">/</span>註冊</div>
+            </div>
+        </div>
+    </div>
+    <div class="section-2">
+        <div class="container">
+            
+            <div class="search">
+                <span>輕鬆享受台北一日悠閒</span><br/>
+                <span>探索每個角落，體驗城市的深度旅遊行程</span>                
+                <input type="text" placeholder="輸入景點名稱查詢" id="que"/><div id="btn">
+                    <img src="/static/icon_search.png"/>
+                </div>  
+            </div>
+            <img src="/static/welcome1.png"/>
+        </div>
+    </div>
+    <div class="section-3" id="sights">
+        <div class="outer" id="out">
+        </div>
+    </div>
+    <div class="section-4">
+        <span>COPYRIGHT © 2021 台北一日遊</span>
+    </div>
+    <script type="text/javascript">
+        let global_sight_data=[];
+        let keyword_data=[];
+        let next_page = 0;
+        let keyword_next_page=null;
+        let amount_of_pic = 0;
+        let amount_of_key_pic = 0;
+        let scroll_by_keyword = false;
+        let current_keyword=null;
+
+
+        async function getSightData(page){
+            try{
+                let url = `/api/attractions?page=${page}`
+                let sightData = await fetch(url);
+                if(sightData.ok){
+                    let parsed_sightData = await sightData.json();
+                    for(let i=0;i<parsed_sightData.data.length;i++){
+                        global_sight_data.push(parsed_sightData.data[i])
+                        }
+                    return parsed_sightData;
+                    
+                }else{
+                    throw Error('Network response was not ok.');
+                }
+                
+            }catch(message){
+                console.log(`${message}`);
+                throw Error('Fetching was not ok!!.');    
+                } 
+        }
+
+        async function getSightDataKeyword(keyword_next_page,keyword){
+            try{
+                let url = `/api/attractions?page=${keyword_next_page}&keyword=${keyword}`;
+                let sightData = await fetch(url);
+                if(sightData.ok){
+                    let parsed_sightData = await sightData.json();
+                    if(parsed_sightData.data){
+                        for(let i=0;i<parsed_sightData.data.length;i++){
+                            keyword_data.push(parsed_sightData.data[i])
+                            }   
+                        return parsed_sightData;
+                    }else{
+                        return "沒有符合的結果"
+                    }      
+                }else{
+                    throw Error('Network response was not ok.');
+                }
+                
+            }catch(message){
+                console.log(`${message}`);
+                throw Error('Fetching was not ok!!.');    
+                } 
+        }
+
+        function createInner(i,byKeyword){
+            let data;
+            if(!byKeyword){
+                data = global_sight_data;
+            }else{
+                data = keyword_data;
+            };    
+            let div_inner = document.createElement('div');
+            let div_mark = document.createElement('div');
+            let div_txt = document.createElement('div');
+            div_inner.className="inner";
+            div_mark.className="mark";
+            div_txt.className="txt";
+            let img = new Image();
+            img.src = data[i].images[0];
+            div_mark.appendChild(img);
+            let div_t1 = document.createElement('div');
+            let div_t2 = document.createElement('div');
+            div_t1.className="t1";
+            div_t2.className="t2";
+            let name = document.createTextNode(data[i].name);
+            div_t1.appendChild(name);
+            let span1 = document.createElement('span');
+            let span2 = document.createElement('span');
+            if(data[i].mrt){
+                let mrt = document.createTextNode(data[i].mrt);
+                span1.appendChild(mrt);
+            }  
+            let cate= document.createTextNode(data[i].category.replace(/\s+/g,''));
+            span2.appendChild(cate);
+            div_t2.appendChild(span1);
+            div_t2.appendChild(span2);
+            div_txt.appendChild(div_t1);
+            div_txt.appendChild(div_t2);
+            div_inner.appendChild(div_mark);
+            div_inner.appendChild(div_txt);
+            return div_inner;
+        }
+        function handleScroll(){
+            if(document.documentElement.scrollTop+window.innerHeight-60==document.body.scrollHeight){
+                if(! scroll_by_keyword){
+                    if(next_page){
+                        let start_index = next_page*12;
+                        let promise = getSightData(next_page);
+                        promise.then((result)=>{
+                            amount_of_pic=global_sight_data.length;
+                            next_page=result["nextPage"];
+                            for(let i=start_index;i<amount_of_pic;i++){
+                                let outer = document.getElementById("out");
+                                outer.appendChild(createInner(i)); 
+                            }   
+                        }).catch((message)=>{
+                            console.log(message)
+                        });
+                    }else{
+                        console.log('no more sight pictures!')
+                    }
+                }else{
+                    if(keyword_next_page){
+                        let start_index = keyword_next_page*12;
+                        let promise = getSightDataKeyword(keyword_next_page,current_keyword);
+                        promise.then((result)=>{
+                            amount_of_key_pic=keyword_data.length;
+                            keyword_next_page=result["nextPage"];
+                            for(let i=start_index;i<amount_of_key_pic;i++){
+                                let outer = document.getElementById("out");
+                                outer.appendChild(createInner(i)); 
+                            }     
+                        }).catch((message)=>{
+                            console.log(message)
+                        });
+                    }else{
+                        console.log('no more sight pictures!')
+                    }
+                };
+            };
+            
+        };
+
+        function init(){
+            let promise = getSightData(next_page);
+                promise.then((result)=>{
+                    amount_of_pic=global_sight_data.length;
+                    next_page=result["nextPage"];
+                    for(let i =0 ; i<amount_of_pic;i++){
+                        let outer = document.getElementById("out");
+                        outer.appendChild(createInner(i,false));        
+                    }
+                }).catch((message)=>{
+                    console.log(message);
+                });   
+            window.addEventListener('scroll',handleScroll);     
+            let btn = document.getElementById('btn');
+            btn.addEventListener('click',sendRequest);
+        };
+
+        function sendRequest(){
+            current_keyword = null;
+            keyword_data = [];
+            let input = document.getElementById('que');
+            let keyword=input.value.replace(/\s+/g,'');
+            if(keyword){
+                let key_page = 0
+                let promise = getSightDataKeyword(key_page,keyword);
+                promise.then((result)=>{
+                    if(typeof(result) === 'string'){
+                        let outer = document.getElementById("out")
+                        while(outer.firstChild){
+                            outer.removeChild(outer.firstChild)
+                        };
+                        let msg = document.createTextNode(result);
+                        outer.appendChild(msg);
+                        scroll_by_keyword = true;
+                        keyword_next_page=null;
+                    }else{
+                        current_keyword = keyword;
+                        scroll_by_keyword = true;
+                        amount_of_key_pic = keyword_data.length;
+                        keyword_next_page = result["nextPage"];  
+                        let outer = document.getElementById("out")
+                        while(outer.firstChild){
+                            outer.removeChild(outer.firstChild)
+                        };
+                        for(let i=0;i<amount_of_key_pic;i++){
+                            outer.appendChild(createInner(i,true)); 
+                        }
+                    }
+                }).catch((message)=>{
+                    let outer = document.getElementById("out")
+                    while(outer.firstChild){
+                        outer.removeChild(outer.firstChild)
+                    };
+                    let msg = document.createTextNode(message);
+                    outer.appendChild(msg);
+                    console.log(message);
+                });
+            };    
+        };
+
+
+        window.addEventListener('load',init);
+
+
+        //練習React
+        //景點圖片的div
+        /*class Picture extends React.Component{
+            render(){
+                return (<div className='mark'>
+                            <img src={this.props.source}/>
+                        </div>)   
+            }
+        }
+    
+        //景點描述文字的div
+        class Describe extends React.Component{
+            render(){
+                return (<div className="txt">
+                            <div className="t1">
+                                {this.props.name}
+                            </div>  
+                            <div className="t2">
+                                <span>{this.props.mrt}</span>
+                                <span>{this.props.category}</span>
+                            </div> 
+                        </div>)
+            }
+        };
+    
+        class Cell extends React.Component{
+            render(){
+                let i = Number(this.props.index);
+                return (<div className="inner">
+                            <Picture source={global_sight_data[i].images[0]}/>
+                            <Describe name={global_sight_data[i].name} 
+                                mrt={global_sight_data[i].mrt} 
+                                category={global_sight_data[i].category}/>
+                        </div>)
+            }    
+        };
+    
+        class Board extends React.Component{
+            constructor(props){
+                super(props);
+                //初始狀態沒有圖片
+                this.state = {
+                    amount_of_pic:0,
+                    next_page:0,
+                }
+            }
+            
+            
+            render(){
+                let cells=[];
+                if(this.state["amount_of_pic"]!= 0){
+                    for(let i=0;i<this.state["amount_of_pic"];i++){
+                        cells.push(<Cell index={i}/>)
+                    };
+                }
+                
+                return (<div className="outer"> 
+                            {cells}
+                        </div>)
+                
+            }
+            
+            async getSightData(page){
+            try{
+                let url = `/api/attractions?page=${page}`
+                let sightData = await fetch(url);
+                if(sightData.ok){
+                    let parsed_sightData = await sightData.json();
+                    for(let i=0;i<parsed_sightData.data.length;i++){
+                        global_sight_data.push(parsed_sightData.data[i])
+                        }
+                    return parsed_sightData;
+                    
+                }else{
+                    throw Error('Network response was not ok.');
+                }
+                
+            }catch(message){
+                console.log(`${message}`);
+                throw Error('Fetching was not ok!!.');    
+                } 
+            }
+
+            componentDidMount(){
+                let promise = this.getSightData(this.state.next_page);
+                promise.then((result)=>{
+                    this.setState({
+                        amount_of_pic:global_sight_data.length,
+                        next_page:result["nextPage"]
+                        });
+                }).catch((message)=>{
+                    console.log(message)
+                });
+                //註冊滑動載入事件
+                window.addEventListener('scroll',this.handleScroll.bind(this));
+            }
+
+            handleScroll(){
+                if(document.documentElement.scrollTop+window.innerHeight-60==document.body.scrollHeight){
+                    if(this.state.next_page){
+                        let promise = this.getSightData(this.state.next_page);
+                        promise.then((result)=>{
+                        this.setState({
+                            amount_of_pic:global_sight_data.length,
+                            next_page:result["nextPage"]
+                            });
+                        }).catch((message)=>{
+                            console.log(message)
+                        });
+                    }else{
+                        alert('no more sight pictures!')
+                    }
+                }
+            }    
+        };
+    
+        window.addEventListener('load',function(){
+            ReactDOM.render(<Board />,document.getElementById('sights'));
+        });*/
+
+    </script>
+</body>
+</html>

@@ -7,6 +7,7 @@ let amount_of_key_pic = 0;
 let scroll_by_keyword = false;
 let current_keyword=null;
 
+let scrolling=false;
 
 async function getSightData(page){
     try{
@@ -93,7 +94,6 @@ function createInner(i,byKeyword){
     return div_inner;
 }
 function handleScroll(){
-    if(document.documentElement.scrollTop+window.innerHeight-60==document.body.scrollHeight){
         if(! scroll_by_keyword){
             if(next_page){
                 let start_index = next_page*12;
@@ -128,9 +128,7 @@ function handleScroll(){
             }else{
                 console.log('no more sight pictures!')
             }
-        };
-    };
-            
+        };           
 };
 
 function init(){
@@ -145,7 +143,18 @@ function init(){
         }).catch((message)=>{
             console.log(message);
         });   
-    window.addEventListener('scroll',handleScroll);     
+    window.addEventListener('scroll',function(){
+         if(document.documentElement.scrollTop+window.innerHeight-60==document.body.scrollHeight){
+             scrolling=true
+           };
+        }
+    );
+    window.setInterval(()=>{
+        if(scrolling){
+            scrolling = false;
+            handleScroll();
+        }
+    },500);     
     let btn = document.getElementById('btn');
     btn.addEventListener('click',sendRequest);
 };

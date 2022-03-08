@@ -53,11 +53,6 @@ class DataBase():
                     sight_data = data[start_id-1:start_id-1+12]#可能是空的[]
             else:
                 #沒有關鍵字的情況
-                #query = ("SELECT * FROM sight WHERE id BETWEEN %(start)s AND %(end)s")
-                #input_data={
-                #    'start': start_id,
-                #    'end': end_id
-                #}
                 input_data={'st':int(page)*12}
                 query = ("SELECT * FROM sight order by id LIMIT %(st)s,12")
                 cursor.execute(query,input_data)
@@ -67,7 +62,8 @@ class DataBase():
             if keyword:
                 try:
                     next_item = data[start_id-1+12]
-                    nextPage = page+1
+                    #要注意page是str要轉成int
+                    nextPage = int(page)+1
                 except IndexError:
                     nextPage = None    
             else:

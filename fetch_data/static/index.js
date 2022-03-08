@@ -154,7 +154,7 @@ function init(){
             scrolling = false;
             handleScroll();
         }
-    },500);     
+    },1000);     
     let btn = document.getElementById('btn');
     btn.addEventListener('click',sendRequest);
 };

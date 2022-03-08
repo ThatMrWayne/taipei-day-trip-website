@@ -45,20 +45,16 @@ class DataBase():
         try:
             if keyword:
                 #先篩選出有關鍵字的景點
-                query = ("SELECT * FROM sight WHERE name LIKE %(key)s ORDER BY id")
-                input_data={'key' : '%'+keyword+'%'}
-                cursor.execute(query,input_data)
+                query = ("SELECT * FROM sight WHERE name LIKE CONCAT('%',%(key)s,'%') ORDER BY id")
+                cursor.execute(query,{'key':keyword})
                 data = cursor.fetchall()
                 if data:
                     #根據page取出篩選資料中的12筆資料
                     sight_data = data[start_id-1:start_id-1+12]#可能是空的[]
             else:
                 #沒有關鍵字的情況
-                query = ("SELECT * FROM sight WHERE id BETWEEN %(start)s AND %(end)s")
-                input_data={
-                    'start': start_id,
-                    'end': end_id
-                }
+                input_data={'st':int(page)*12}
+                query = ("SELECT * FROM sight order by id LIMIT %(st)s,12")
                 cursor.execute(query,input_data)
                 sight_data = cursor.fetchall() #可能是空的[]
 
@@ -66,7 +62,8 @@ class DataBase():
             if keyword:
                 try:
                     next_item = data[start_id-1+12]
-                    nextPage = page+1
+                    #要注意page是str要轉成int
+                    nextPage = int(page)+1
                 except IndexError:
                     nextPage = None    
             else:
@@ -79,7 +76,9 @@ class DataBase():
 
             ##如果有資料才去搜尋圖片url
             if sight_data:
-                ids = tuple([d['id'] for d in sight_data])
+                #在query裡放列表給in用
+                ids = [d['id'] for d in sight_data]
+                ids='('+','.join([str(i) for i in ids])+')'
                 img_query=f"SELECT sight_id, url from image where sight_id in {ids}"
                 cursor.execute(img_query)
                 img_data = cursor.fetchall()    
@@ -123,6 +122,8 @@ class DataBase():
                 cursor.execute("SELECT url FROM image WHERE sight_id = %(sightid)s ",{"sightid":sightid})
                 img_data = [i['url'] for i in cursor.fetchall()]
                 sight_data[0]['image']=img_data
+                sight_data[0]['latitude']=float(sight_data[0]['latitude'])
+                sight_data[0]['longitude']=float(sight_data[0]['longitude'])
                 result={'data':sight_data[0]}
             else:
                 result={'data':[]}        

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/cwtexyen.css">
+    <link rel="stylesheet" href="{{url_for('fetch.static',filename='/css/attraction.css')}}">
+    <link rel="stylesheet" href="{{url_for('fetch.static',filename='/css/header_footer.css')}}">
+    <link rel="stylesheet" href="{{url_for('fetch.static',filename='/css/sign.css')}}">
+    <link rel="stylesheet" href="{{url_for('fetch.static',filename='/css/carousel.css')}}">
+</head>
+<body>
+    <div class="section-1">
+        <div class="nav">
+            <div class="header-1">
+                台北一日遊
+            </div>
+            <div class="header-2">
+                <div class="schedule">預定行程</div>
+                <div class="login"><span id="signin">登入</span><span style="font-size: 16px;">/</span><span id="signup">註冊</span></div>
+            </div>
+        </div>
+    </div>
+    <div class="section-2">
+        <div class="outer-2">
+            <div class="carousel">
+                <button class="carousel__button carousel__button--left" >
+                <img class="left-arrow" src="/static/btn_leftArrow.png">
+                </button>
+                <div class="carousel__track-container">
+                    <ul class="carousel__track">
+                        <!--<li class="carousel__slide current-slide">
+                        <img class="carousel__image" src="pic.jpg"/>
+                        </li>-->
+                    </ul>
+                </div>
+                <button class="carousel__button carousel__button--right" >
+                <img class="right-arrow" src="/static/btn_rightArrow.png">
+                </button>
+                <div class="carousel__nav">
+                    <!-- <div class="carousel__indicator"></div>
+                    <div class="carousel__indicator"></div>
+                    <div class="carousel__indicator"></div> -->          
+                </div>
+            </div>
+            <div class="schedule-info">
+                <div class="sight-name"><!--平安鐘--></div>
+                <div class="type-mrt"><!--公共藝術at行天宮--></div>
+                <div class="booking">
+                    <form action="">
+                        <span>訂購導覽行程</span>
+                        <span class="small">此景點為中心的一日行程，帶您探索城市故事</span>
+                        <div class="choose-date">
+                            <span>選擇時間 :</span><input type="date" name="date" style="border:1px saddlebrown solid;"/>
+                        </div>
+                        <div class="choose-time">
+                            <span>選擇時間 :</span><input type="radio" name="time" value="morning"/><label class="small">上半天</label><input type="radio" name="time" value="afternoon"/><label class="small">下半天</label>
+                        </div>    
+                        <div class="fee">
+                            <span>導覽費用 :</span><span class="small">新台幣2000元</span>
+                        </div>
+                        <button id="book-btn">開始預定行程</button>
+                    </form>
+                </div>
+            </div>
+        </div>  
+        <div class="seperate"></div>  
+    </div>   
+    <div class="section-3">
+        <div class="outer-3">
+            <div class="description">
+                
+            </div>
+            <div class="address">
+                <div class="thick">景點地址 :</div>
+                <div class="address-info"></div>
+            </div>
+            <div class="transport">
+                <div class="thick">交通方式 :</div>
+                <div class="transport-info"></div>
+            </div>
+        </div>    
+    </div>
+    
+    <div class="section-4">
+        <span>COPYRIGHT © 2021 台北一日遊</span>
+    </div>
+    <script type="text/javascript" src="{{url_for('fetch.static',filename='/js/attraction.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('fetch.static',filename='/js/sign.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('fetch.static',filename='/js/carousel.js')}}"></script>
+</body>
+</html>
+
+
+

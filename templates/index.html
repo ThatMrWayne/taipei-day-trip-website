@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/cwtexyen.css">
-    <link rel="stylesheet" href="{{url_for('fetch.static',filename='index.css')}}">
+    <link rel="stylesheet" href="{{url_for('fetch.static',filename='/css/index.css')}}">
+    <link rel="stylesheet" href="{{url_for('fetch.static',filename='/css/header_footer.css')}}">
+    <link rel="stylesheet" href="{{url_for('fetch.static',filename='/css/sign.css')}}">
 </head>
 <body>
     <div class="section-1">
@@ -40,6 +42,7 @@
     <div class="section-4">
         <span>COPYRIGHT © 2021 台北一日遊</span>
     </div>
-    <script type="text/javascript" src="{{url_for('fetch.static',filename='index.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('fetch.static',filename='/js/index.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('fetch.static',filename='/js/sign.js')}}"></script>
 </body>
 </html>

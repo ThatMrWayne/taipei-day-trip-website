@@ -1,0 +1,106 @@
+/*body margin設為0*/
+body{
+    margin: 0px;
+    font-family:"Noto Sans TC", sans-serif;
+    position: relative;
+    min-height: 100vh;
+}
+/*section1的部分*/
+.section-1{
+    display: flex;
+    justify-content:center;
+    align-items: center;
+    width:100%;
+    position:fixed;/*如果設定absolute or fixed會跳脫頁面所以寬度會變成以內容為主所以要設定width:100% ,另外fixed是相對viewport/absolute是相對外層有無設定relative | absolute | fixed | inherit,若無則以body為基準*/
+    top:0px;/*定在頁面上方*/
+    background: white; /*要設定白色要不然往下滑時,下面的內容會透過去選單列*/
+    z-index: 2;/*選單列蓋過下面所有內容*/
+    border-bottom:1px #E8E8E8 solid;
+    
+}
+/*選單列外容器*/
+.nav{
+    width:1200px;
+    flex:none;
+    display: flex;
+    justify-content:space-between;
+    align-items: center;
+    padding-top: 9px;
+    padding-bottom: 9px;
+    
+}
+.header-1{
+    flex:none;
+    width:150px;
+    font-size:30px;
+    font-weight:bold;
+    color: #448899;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+.header-2{
+    flex: auto;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    color:#666666;
+    font-size:16px;
+    font-family:"Noto Sans TC", sans-serif;
+}
+
+.header-2 span{
+    font-size:16px;
+}
+
+.login,.schedule{
+    flex: none;
+}
+.schedule{
+    margin-right: 20px;
+}
+.login{
+    margin-right: 10px;
+}
+
+.schedule:hover{
+    cursor: pointer;
+    color:#4faac1;   
+}
+
+#signin:hover{
+    cursor: pointer;
+    color:#4faac1;   
+}
+
+
+#signup:hover{
+    cursor: pointer;
+    color:#4faac1;   
+}
+
+@media(max-width:1200px){
+    .nav{flex:auto};/*小於1200px時,選單列寬度要跟螢幕一樣*/
+    .header-1{margin-left: 10px}
+   
+}
+
+.section-4{
+    font-family:"Noto Sans TC", sans-serif;
+    font-size: 16px;
+    color:#FFFFFF;
+    font-weight: bold;
+    background-color: #757575;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 104px;
+    position:absolute;
+    bottom:-104px;
+    width:100%;   
+}
+.section-4>span{
+    flex: none;
+    display: block;
+}
+
+

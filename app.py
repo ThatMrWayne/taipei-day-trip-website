@@ -19,8 +19,9 @@ def attraction(id):
 @app.route("/booking")
 def booking():
 	return render_template("booking.html")
-@app.route("/thankyou")
+@app.route("/thankyou/")
 def thankyou():
 	return render_template("thankyou.html")
+
 
 app.run(host="0.0.0.0",port=3000)

@@ -6,24 +6,6 @@ let amount_of_pic = 0;
 let amount_of_key_pic = 0;
 let scroll_by_keyword = false;
 let current_keyword=null;
-let sign = {
-    'signIn':{
-        "box":"signinbox",
-        "head_txt":"登入會員帳號",
-        "mail_txt":"輸入電子信箱",
-        "btn_txt":"登入帳戶",
-        "destination":"tosignup",
-        "msg":"還沒有帳戶?點此註冊"
-    },
-    'signUp':{
-        "box":"signupbox",
-        "head_txt":"註冊會員帳號",
-        "mail_txt":"輸入電子郵件",
-        "btn_txt":"註冊帳戶",
-        "destination":"tosignin",
-        "msg":"已經有帳戶?點此登入"
-    }
-};
 
 
 
@@ -76,11 +58,42 @@ async function getSightDataKeyword(keyword_next_page,keyword){
         } 
 }
 
+//跑去/attraction/id
+async function gotoAttractionPage(id){
+    try{
+        let url = `/attraction/${id}`
+        let response = await fetch(url);
+        if(response.ok){
+            return response                  
+        }else{
+            throw Error('Network response was not ok.');
+        }              
+    }catch(message){
+        console.log(`${message}`);
+        throw Error('Fetching was not ok!!.');    
+        } 
+};
+
+
 //為景點文字div加入屬性title,當滑鼠移上去時可以看到完整景點
 function addTitle(t1){
     t1.setAttribute("title",t1.textContent);
     //console.log(t1.textContent)
 };
+
+//按下景點框框時跑到景點頁面
+function gotoAttraction(){
+    let t3 = this.getElementsByClassName("t3")[0];
+    window.location.href = '/attraction/'+t3.id;
+
+    
+    //let promise = gotoAttractionPage(t3.id);
+    //promise.then((res)=>{
+    //    window.location.replace(res.url);
+    //}).catch((e)=>{
+    //    console.log(e)
+    //})
+}
 
 
 
@@ -106,6 +119,10 @@ function createInner(i,byKeyword){
     let div_t2 = document.createElement('div');
     div_t1.className="t1";
     div_t2.className="t2";
+    //t3是隱藏起來的div,這個div的id屬性就是該景點的id,供之後點景點時可以抓到景點id送給路由/attraction/<id>
+    let div_t3 = document.createElement('div');
+    div_t3.className="t3";
+    div_t3.id=String(data[i].id);
     //景點名稱
     let name = document.createTextNode(data[i].name);
     div_t1.appendChild(name);
@@ -127,11 +144,14 @@ function createInner(i,byKeyword){
     div_t2.appendChild(span2);
     div_txt.appendChild(div_t1);
     div_txt.appendChild(div_t2);
+    div_txt.appendChild(div_t3);
     div_inner.appendChild(div_mark);
     div_inner.appendChild(div_txt);
-    //
+    //給inner加上事件:按景點的框框事件跑到/attraction/<id>
+    div_inner.addEventListener('click',gotoAttraction);
     return div_inner;
-}
+};
+
 function handleScroll(){
         if(! scroll_by_keyword){
             if(next_page){
@@ -216,6 +236,10 @@ function sendRequest(){
 };
 
 
+
+
+
+
 function init(){
     let promise = getSightData(next_page);
         promise.then((result)=>{
@@ -245,8 +269,15 @@ function init(){
     //依關鍵字搜尋景點註冊事件
     let btn = document.getElementById('btn');
     btn.addEventListener('click',sendRequest);
+    
+
+
+
+
+
+
     //按下登入事件
-    let login_btn = document.getElementById("signin");
+    /**let login_btn = document.getElementById("signin");
     login_btn.addEventListener('click',function(){
         let bg = showBox(sign.signIn,true,createBack());
         document.body.appendChild(bg);
@@ -256,11 +287,11 @@ function init(){
     signup_btn.addEventListener('click',function(){
         let bg = showBox(sign.signUp,false,createBack());
         document.body.appendChild(bg);
-    });
+    });**/
 };
 
 //關掉框框
-function closeBox(){
+/**function closeBox(){
     document.body.classList.toggle("stop-scrolling");
     let bg = document.getElementsByClassName('bg');
     document.body.removeChild(bg[0]);
@@ -360,7 +391,7 @@ function showBox(obj,flag,background){//flag true代表有帳戶,false沒有帳�
     sign_box.append(sign_content);
     background.appendChild(sign_box);
     return background;
-}
+}**/
 
 
 

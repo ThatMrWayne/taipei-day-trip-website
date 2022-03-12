@@ -1,24 +1,24 @@
 /*body margin設為0*/
-body{
+/*body{
     margin: 0px;
     font-family:"Noto Sans TC", sans-serif;
     position: relative;
     min-height: 100vh;
-}
+}*/
 /*section1的部分*/
-.section-1{
+/*.section-1{
     display: flex;
     justify-content:center;
     align-items: center;
     width:100%;
     position:fixed;/*如果設定absolute or fixed會跳脫頁面所以寬度會變成以內容為主所以要設定width:100% ,另外fixed是相對viewport/absolute是相對外層有無設定relative | absolute | fixed | inherit,若無則以body為基準*/
-    top:0px;/*定在頁面上方*/
-    background: white; /*要設定白色要不然往下滑時,下面的內容會透過去選單列*/
-    z-index: 2;/*選單列蓋過下面所有內容*/
-    
-}
+    /*top:0px;/*定在頁面上方*/
+    /*background: white; /*要設定白色要不然往下滑時,下面的內容會透過去選單列*/
+    /*z-index: 2;/*選單列蓋過下面所有內容*/ 
+/*}*/
+
 /*選單列外容器*/
-.nav{
+/*.nav{
     width:1200px;
     flex:none;
     display: flex;
@@ -76,6 +76,7 @@ body{
     cursor: pointer;
     color:#4faac1;   
 }
+*/
 
 
 
@@ -161,11 +162,21 @@ body{
     width:650px;
 }
 
+#btn:hover{
+    cursor: pointer;
+    box-shadow: 0px 6px 2px #999;
+}
+
+#btn:active{
+    box-shadow: 0px 3px 2px #666;
+    transform: translateY(4px);
+}
+
 
 
 @media(max-width:1200px){
-    .nav{flex:auto};/*小於1200px時,選單列寬度要跟螢幕一樣*/
-    .header-1{margin-left: 10px}
+    /*.nav{flex:auto};/*小於1200px時,選單列寬度要跟螢幕一樣*/
+    /*.header-1{margin-left: 10px}*/
     .container{width:100%}
    
 }
@@ -250,6 +261,9 @@ body{
     border-radius: 5px;
     background-color: #FFFFFF;
 }
+.inner:hover{
+    cursor: pointer;
+}
 
 .mark{
     /*border:1px solid red;*/
@@ -318,6 +332,10 @@ body{
     padding-right: 10px;
 }
 
+/*.t3{
+    display: none;
+}*/
+
 /*圖片部分rwd*/
 @media(max-width:1200px){
     .outer{
@@ -335,7 +353,7 @@ body{
     }
 }
 
-.section-4{
+/*.section-4{
     font-family:"Noto Sans TC", sans-serif;
     font-size: 16px;
     color:#FFFFFF;
@@ -352,30 +370,20 @@ body{
 .section-4>span{
     flex: none;
     display: block;
-}
-
-#btn:hover{
-    cursor: pointer;
-    box-shadow: 0px 6px 2px #999;
-}
-
-#btn:active{
-    box-shadow: 0px 3px 2px #666;
-    transform: translateY(4px);
-}
+}*/
 
 /*透明背景*/
-.bg{
+/*.bg{
     background: rgba(0, 0, 0, 0.35);
     position:fixed;
     top:0px;
     width: 100%;
     height:100vh;
     z-index: 3;
-}
+}*/
 
 /*整個登入匡*/
-.signinbox,.signupbox{
+/*.signinbox,.signupbox{
     box-sizing: border-box;
     border-radius: 6px;
     width: 340px;
@@ -386,34 +394,29 @@ body{
     background: white;
 
 
-}
+}*/
 
 /*登入匡上面那小條顏色*/
-.strip{
+/*.strip{
     box-sizing: border-box;
     background: linear-gradient(270deg, #337788 0%, #66AABB 100%);
     height:10px;
     width:100%;
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;;
-}
+}*/
 
 /*登入匡主內容*/
-.content{
+/*.content{
     width:100%;
-    /*height:250px;*/
-    /*display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;*/
     background: white;
     font-family:"Noto Sans TC", sans-serif;
     border-bottom-left-radius: 6px;
     border-bottom-right-radius: 6px;
-}
+}*/
 
 /*登入會員系統字&x圖案*/
-.head{
+/*.head{
     font-size: 24px;
     box-sizing: border-box;
     text-align: center;
@@ -427,10 +430,10 @@ body{
     position: relative;
     left:50%;
     transform: translateX(-50%);
-}
+}*/
 
 /*x圖案*/
-.icon-close{
+/*.icon-close{
     position:absolute;
     right:0px;
     top:0px;
@@ -438,16 +441,16 @@ body{
 
 .icon-close:hover{
     cursor: pointer;
-}
+}*/
 
 
 /*按下登入匡時,頁面停止滑動*/
-.stop-scrolling{
+/*.stop-scrolling{
     height: 100%;
     overflow: hidden;
-}
+}*/
 /*姓名輸入匡*/
-.name{
+/*.name{
     flex:none;
     width: 91%;
     height:47px;
@@ -464,10 +467,10 @@ body{
 
 .name::-webkit-input-placeholder{
     font-size: 16px;
-}
+}*/
 
 /*email輸入匡*/
-.email{
+/*.email{
     flex:none;
     width: 91%;
     height:47px;
@@ -484,10 +487,10 @@ body{
 
 .email::-webkit-input-placeholder{
     font-size: 16px;
-}
+}*/
 
 /*密碼輸入匡*/ 
-.pass{
+/*.pass{
     flex:none;
     width: 91%;
     height:47px;
@@ -503,10 +506,10 @@ body{
 }
 .pass::-webkit-input-placeholder{
     font-size: 16px;
-}
+}*/
 
 /*登入,註冊鈕*/
-#signbtn{
+/*#signbtn{
     flex:none;
     width:91%;
     height:47px;
@@ -541,10 +544,10 @@ body{
 #signbtn:active{
     box-shadow: 0px 3px 2px #666;
     
-}
+}*/
 
 /*還沒有帳號嗎 or 已經有帳好了嗎*/
-.tosignup,.tosignin{
+/*.tosignup,.tosignin{
     flex:none;
     width:91%;
     height:22px;
@@ -568,4 +571,4 @@ body{
 .tosignup:hover{
     cursor:pointer;
     color:#4faac1; 
-}
+}*/

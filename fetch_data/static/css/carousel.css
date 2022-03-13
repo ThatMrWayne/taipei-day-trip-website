@@ -334,3 +334,12 @@ label{
     }
 }
 
+@media(max-width:400px){
+    .schedule-info{
+        height:414px;
+    }
+    .booking{
+        height:310px;
+    }
+}
+

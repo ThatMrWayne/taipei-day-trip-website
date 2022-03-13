@@ -332,6 +332,14 @@ label{
     .carousel{
         width:100%;
     }
+    .carousel__track-container,.carousel__track,.carousel__slide,.carousel__image{
+        border-radius: 0px;
+    }
+    
+    
+   
+    
+
 }
 
 @media(max-width:400px){

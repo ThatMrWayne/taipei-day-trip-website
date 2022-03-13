@@ -1,11 +1,7 @@
-
-
-
 .section-2{
     display: flex;
     justify-content: center;
-    align-content: center;
-    position: relative;
+    align-items: center;
     margin-top:60px;
     flex-wrap: wrap;
     /*border: 2px solid darkblue;*/
@@ -14,6 +10,7 @@
 .outer-2{
     box-sizing: border-box;
     width:1200px;
+    flex:none;
     /*height不用設*/
     display:flex;
     justify-content: center;
@@ -23,7 +20,7 @@
     padding-right: 5px;
     padding-top: 37px;
     padding-bottom: 37px;
-   /* border:1px purple dashed;*/
+    /*border:1px purple dashed;*/
     
 }
 
@@ -155,6 +152,7 @@ img{display: block}
 .booking{
     height: 302px;
     background-color: #E8E8E8;
+    border-radius: 5px;
 }
 
 
@@ -207,7 +205,7 @@ form > span:nth-of-type(2){
 
 
 .choose-time input{
-    accent-color: #448899;
+    /*accent-color: #448899;*/
     width:18px;
     height:18px;
     vertical-align: middle;
@@ -250,9 +248,11 @@ label{
 
 /*分割線*/
 .seperate{
-    flex:none;
+    position: relative;
+    border: 0.5px #E8E8E8 solid;
     width:1200px;
-    border:1px #E8E8E8 solid;
+    left:50%;
+    transform: translateX(-50%);
 }
 
 /*最後文字部分*/
@@ -261,12 +261,11 @@ label{
 .section-3{
     display: flex;
     justify-content: center;
-    align-content: center;
-    position: relative;
+    align-items: center;
     flex-wrap: wrap;
     /*border: 1px red solid;*/
     margin-bottom: 104px;
-    padding-bottom: 40px;;
+    padding-bottom: 40px;
 }
 
 .outer-3{
@@ -292,22 +291,27 @@ label{
 }
 
 .address,.transport{
-    margin-top: 25px;;
+    margin-top: 25px;
 }
 
 
 @media(max-width:1200px){
+    .outer-2{
+        width:100%;
+    }
     .outer-3{
         width:100%;
     }
-
-
+    .seperate{
+        width:100%;
+    }
 }
 
 @media(max-width:1000px){
     .schedule-info{
         margin-top: 20px;
         width:95%;
+        aspect-ratio: 1.33;
         flex:none;
     }
     .carousel{
@@ -326,7 +330,7 @@ label{
         padding-right: 0px;    
     }
     .carousel{
-        width:100%
+        width:100%;
     }
 }
 

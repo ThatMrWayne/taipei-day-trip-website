@@ -138,6 +138,11 @@ function init_carousel() {
 
     }).catch((e) => {
         console.log(e)
+    });
+    //按台北一日遊回首頁
+    let header = document.querySelector('.header-1');
+    header.addEventListener('click',()=>{
+        window.location.href = '/';
     })
 }
 

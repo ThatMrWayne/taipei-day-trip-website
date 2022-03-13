@@ -254,6 +254,11 @@ function init(){
     //依關鍵字搜尋景點註冊事件
     let btn = document.getElementById('btn');
     btn.addEventListener('click',sendRequest);
+    //按台北一日遊回首頁    
+    let header = document.querySelector('.header-1');
+    header.addEventListener('click',()=>{
+        window.location.href = '/';
+    })
 };
 
 

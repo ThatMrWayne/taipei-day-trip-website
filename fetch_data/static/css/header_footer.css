@@ -38,6 +38,11 @@ body{
     margin-right: 10px;
     margin-left: 10px;
 }
+
+.header-1:hover{
+    cursor: pointer;
+}
+
 .header-2{
     flex: auto;
     display: flex;

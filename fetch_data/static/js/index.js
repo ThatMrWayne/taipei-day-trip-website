@@ -39,7 +39,8 @@ async function getSightDataKeyword(keyword_next_page,keyword){
         let sightData = await fetch(url);
         if(sightData.ok){
             let parsed_sightData = await sightData.json();
-            if(parsed_sightData.data){
+            //console.log(parsed_sightData);
+            if(parsed_sightData.data.length!==0){
                 for(let i=0;i<parsed_sightData.data.length;i++){
                     keyword_data.push(parsed_sightData.data[i])
                     }   
@@ -181,7 +182,8 @@ function sendRequest(){
         promise.then((result)=>{
             //如果回傳是"沒有符合的結果"
             if(typeof(result) === 'string'){
-                let outer = document.getElementById("out")
+                console.log(result);
+                let outer = document.getElementById("out");
                 //把圖片區都移除
                 while(outer.firstChild){
                     outer.removeChild(outer.firstChild)
@@ -191,6 +193,7 @@ function sendRequest(){
                 scroll_by_keyword = true;
                 keyword_next_page=null;
             }else{
+                console.log(result);
                 current_keyword = keyword;
                 //console.log(keyword);
                 scroll_by_keyword = true;

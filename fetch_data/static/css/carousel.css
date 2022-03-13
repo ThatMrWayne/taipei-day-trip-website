@@ -213,6 +213,7 @@ form > span:nth-of-type(2){
 
     background-color:white;
     border-radius: 50%;
+    border: 1.5px solid white;
 
     vertical-align: middle;
     display: inline-block;
@@ -228,7 +229,7 @@ form > span:nth-of-type(2){
 
 #choice1:checked,#choice2:checked{
     background-color:#448899;
-    border: 1.5px solid white;
+  
 }
 
 label{

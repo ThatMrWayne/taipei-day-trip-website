@@ -34,62 +34,59 @@ class DataBase():
             print(err)
             return(err.msg)
 
-        try:
-            end_id = (int(page)+1)*12
-        except:
-            #如果page為none,視為page=0
-            end_id = 12
-        start_id = (end_id-12)+1        
+        #如果沒有給Page 視為0
+        if not page:
+            page = 0       
 
         cursor= cnx.cursor(dictionary=True)
         try:
             if keyword:
                 #先篩選出有關鍵字的景點
-                query = ("SELECT * FROM sight WHERE name LIKE CONCAT('%',%(key)s,'%') ORDER BY id")
-                cursor.execute(query,{'key':keyword})
-                data = cursor.fetchall()
-                if data:
-                    #根據page取出篩選資料中的12筆資料
-                    sight_data = data[start_id-1:start_id-1+12]#可能是空的[]
+                #一次直接取13筆,之後可以用有沒有第13筆判斷是不是有下一頁
+                query = ("SELECT * FROM sight WHERE name LIKE CONCAT('%',%(key)s,'%') ORDER BY id LIMIT %(st)s,13")
+                cursor.execute(query,{'key':keyword,'st':int(page)*12})
+                sight_data = cursor.fetchall() #可能是空的[]
             else:
                 #沒有關鍵字的情況
-                input_data={'st':int(page)*12}
-                query = ("SELECT * FROM sight order by id LIMIT %(st)s,12")
-                cursor.execute(query,input_data)
+                #一次直接取13筆,之後可以用有沒有第13筆判斷是不是有下一頁
+                query = ("SELECT * FROM sight order by id LIMIT %(st)s,13")
+                cursor.execute(query,{'st':int(page)*12})
                 sight_data = cursor.fetchall() #可能是空的[]
 
-            #確定有無下一頁
-            if keyword:
-                try:
-                    next_item = data[start_id-1+12]
-                    #要注意page是str要轉成int
-                    nextPage = int(page)+1
-                except IndexError:
-                    nextPage = None    
-            else:
-                next_page = {'next':end_id+1}
-                cursor.execute("select name from sight where id = %(next)s",next_page)
-                if not cursor.fetchall():
-                    nextPage=None
-                else:
-                    nextPage = (end_id//12)
+            #確定有沒有第13筆,有無下一頁
+            try:
+                next_item = sight_data[12]
+                nextPage = int(page)+1
+            except IndexError:
+                nextPage = None
 
             ##如果有資料才去搜尋圖片url
             if sight_data:
                 #在query裡放列表給in用
-                ids = [d['id'] for d in sight_data]
+                #取得所有景點資料的id
+                ids = [single_sight_data['id'] for single_sight_data in sight_data]
+                #(1,2,3,4,5,6,7,8,9,10,11,12)
                 ids='('+','.join([str(i) for i in ids])+')'
-                img_query=f"SELECT sight_id, url from image where sight_id in {ids}"
+                img_query = f"SELECT sight_id, url from image where sight_id in {ids}"
                 cursor.execute(img_query)
-                img_data = cursor.fetchall()    
-                for i in range(len(sight_data)):
-                    sight_id = sight_data[i].get('id')
-                    sight_data[i]['images']=[row.get('url') for row in img_data if row['sight_id']==sight_id]
-                    sight_data[i]['latitude']=float(sight_data[i]['latitude'])
-                    sight_data[i]['longitude']=float(sight_data[i]['longitude'])
+                img_data = cursor.fetchall()
+                #如果資料有13筆,取前12筆就好
+                if len(sight_data)==13:     
+                    for i in range(len(sight_data)-1):
+                        sight_id = sight_data[i].get('id')
+                        sight_data[i]['images']=[row.get('url') for row in img_data if row['sight_id']==sight_id]
+                        sight_data[i]['latitude']=float(sight_data[i]['latitude'])
+                        sight_data[i]['longitude']=float(sight_data[i]['longitude'])
+                else:
+                #如果沒有13筆,就是每筆都要
+                    for data in sight_data:
+                        sight_id = data.get('id')
+                        data['images']=[row.get('url') for row in img_data if row['sight_id']==sight_id]
+                        data['latitude']=float(data['latitude'])
+                        data['longitude']=float(data['longitude'])        
             result={
                     "nextPage":nextPage,
-                    "data":sight_data
+                    "data":sight_data[:12] #回傳前12筆就好
                     }  
         except mysql.connector.Error as err:
             print(err)

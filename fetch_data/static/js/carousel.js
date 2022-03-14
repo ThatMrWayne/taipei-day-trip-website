@@ -103,14 +103,14 @@ function changeFee(){
     let morning = document.getElementById("choice1");
     let afternoon = document.getElementById("choice2");
     if(morning.checked){
-        if(fee_text!=="新台幣2000元"){
+        if(fee_text!=="新台幣 2000 元"){
             fee.removeChild(fee_text);
-            fee.appendChild(document.createTextNode("新台幣2000元"));
+            fee.appendChild(document.createTextNode("新台幣 2000 元"));
         }    
     }else if(afternoon.checked){
         if(fee_text!=="新台幣2500元"){
             fee.removeChild(fee_text);
-            fee.appendChild(document.createTextNode("新台幣2500元"));
+            fee.appendChild(document.createTextNode("新台幣 2500 元"));
         }
     }
 }

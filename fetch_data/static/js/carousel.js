@@ -99,17 +99,16 @@ function plugInfo(info){
 function changeFee(){
     let fee = document.getElementById('tour-fee');
     let fee_text = fee.firstChild;
-    console.log(fee_text);
     let morning = document.getElementById("choice1");
     let afternoon = document.getElementById("choice2");
     if(morning.checked){
         if(fee_text!=="新台幣 2000 元"){
-            fee.removeChild(fee_text);
+            fee.firstChild.remove();
             fee.appendChild(document.createTextNode("新台幣 2000 元"));
         }    
     }else if(afternoon.checked){
-        if(fee_text!=="新台幣2500元"){
-            fee.removeChild(fee_text);
+        if(fee_text!=="新台幣 2500 元"){
+            fee.firstChild.remove();
             fee.appendChild(document.createTextNode("新台幣 2500 元"));
         }
     }

@@ -95,7 +95,25 @@ function plugInfo(info){
     transport.appendChild(document.createTextNode(info.transport));
 }
 
-
+//選擇不同半天價錢會變
+function changeFee(){
+    let fee = document.getElementById('tour-fee');
+    let fee_text = fee.firstChild;
+    console.log(fee_text);
+    let morning = document.getElementById("choice1");
+    let afternoon = document.getElementById("choice2");
+    if(morning.checked){
+        if(fee_text!=="新台幣2000元"){
+            fee.removeChild(fee_text);
+            fee.appendChild(document.createTextNode("新台幣2000元"));
+        }    
+    }else if(afternoon.checked){
+        if(fee_text!=="新台幣2500元"){
+            fee.removeChild(fee_text);
+            fee.appendChild(document.createTextNode("新台幣2500元"));
+        }
+    }
+}
 
 
 
@@ -144,7 +162,13 @@ function init_carousel() {
     header.addEventListener('click',()=>{
         window.location.href = '/';
     })
+    //選上半天下半天價錢會變
+    let morning = document.getElementById("choice1");
+    let afternoon = document.getElementById("choice2");
+    morning.addEventListener('click',changeFee);
+    afternoon.addEventListener('click',changeFee);
 }
+
 
 
 window.addEventListener('load', init_carousel);

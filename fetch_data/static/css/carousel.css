@@ -303,6 +303,7 @@ label{
 .description,.address,.transport{
    /*border:1px peru solid;*/
     word-wrap:break-word;
+    line-height: 24px;
 }
 
 .thick{

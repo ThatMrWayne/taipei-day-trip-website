@@ -34,62 +34,52 @@ class DataBase():
             print(err)
             return(err.msg)
 
-        try:
-            end_id = (int(page)+1)*12
-        except:
-            #如果page為none,視為page=0
-            end_id = 12
-        start_id = (end_id-12)+1        
+        #如果沒有給Page 視為0
+        if not page:
+            page = 0       
 
         cursor= cnx.cursor(dictionary=True)
         try:
             if keyword:
-                #先篩選出有關鍵字的景點
-                query = ("SELECT * FROM sight WHERE name LIKE CONCAT('%',%(key)s,'%') ORDER BY id")
-                cursor.execute(query,{'key':keyword})
-                data = cursor.fetchall()
-                if data:
-                    #根據page取出篩選資料中的12筆資料
-                    sight_data = data[start_id-1:start_id-1+12]#可能是空的[]
-            else:
-                #沒有關鍵字的情況
-                input_data={'st':int(page)*12}
-                query = ("SELECT * FROM sight order by id LIMIT %(st)s,12")
-                cursor.execute(query,input_data)
+                keyword_query = ("SELECT s1.* , s2.url AS images from "
+                "(SELECT * FROM sight WHERE name LIKE CONCAT('%',%(key)s,'%') ORDER BY id LIMIT %(st)s,13) AS s1 "
+                "INNER JOIN image AS s2 ON s1.id = s2.sight_id")
+                cursor.execute(keyword_query,{'key':keyword,'st':int(page)*12})
                 sight_data = cursor.fetchall() #可能是空的[]
-
-            #確定有無下一頁
-            if keyword:
-                try:
-                    next_item = data[start_id-1+12]
-                    #要注意page是str要轉成int
-                    nextPage = int(page)+1
-                except IndexError:
-                    nextPage = None    
             else:
-                next_page = {'next':end_id+1}
-                cursor.execute("select name from sight where id = %(next)s",next_page)
-                if not cursor.fetchall():
-                    nextPage=None
-                else:
-                    nextPage = (end_id//12)
+                normal_query = ("SELECT s1.* , s2.url AS images from "
+                "(SELECT * FROM sight ORDER BY id LIMIT %(st)s,13) AS s1 "
+                "INNER JOIN image AS s2 ON s1.id = s2.sight_id")
+                cursor.execute(normal_query,{'st':int(page)*12})
+                sight_data = cursor.fetchall() #可能是空的[]    
 
-            ##如果有資料才去搜尋圖片url
             if sight_data:
-                #在query裡放列表給in用
-                ids = [d['id'] for d in sight_data]
-                ids='('+','.join([str(i) for i in ids])+')'
-                img_query=f"SELECT sight_id, url from image where sight_id in {ids}"
-                cursor.execute(img_query)
-                img_data = cursor.fetchall()    
-                for i in range(len(sight_data)):
-                    sight_id = sight_data[i].get('id')
-                    sight_data[i]['images']=[row.get('url') for row in img_data if row['sight_id']==sight_id]
-                    sight_data[i]['latitude']=float(sight_data[i]['latitude'])
-                    sight_data[i]['longitude']=float(sight_data[i]['longitude'])
+                final = []
+                current_sight = sight_data[0]
+                current_sight['images'] = [sight_data[0]['images']]
+                current_id = sight_data[0]['id']
+                for data in sight_data[1:]:
+                    if data['id']==current_id:
+                        current_sight['images'].append(data['images'])
+                    else:
+                        final.append(current_sight)
+                        current_sight=data
+                        current_sight['images'] = [current_sight['images']]
+                        current_id = current_sight['id']
+                final.append(current_sight)
+            else:
+                final=[]
+
+            #查看有沒有下一頁
+            try:
+                next_item = final[12]
+                nextPage = int(page)+1
+            except:
+                nextPage = None      
+
             result={
                     "nextPage":nextPage,
-                    "data":sight_data
+                    "data":final[:12] #回傳前12筆就好
                     }  
         except mysql.connector.Error as err:
             print(err)
@@ -140,15 +130,4 @@ class DataBase():
 
 
              
-
-
-
-
-
-
-
-
-
-
-
 db = DataBase()           

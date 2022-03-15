@@ -11,6 +11,7 @@ fetch = Blueprint('fetch',__name__,static_folder='static',static_url_path='/fetc
 def get_attraction():
     page = request.args.get('page')
     keyword = request.args.get('keyword')
+    #如果沒有給page或是給的page是數字形式的話就可以拿資料
     if not page or page.isdigit():              
         data = db.get_attrac_page(page,keyword)
         if type(data) is str:
@@ -21,6 +22,7 @@ def get_attraction():
         else:    
             response_msg = json.dumps(data,ensure_ascii=False)
             res=make_response(response_msg,200)
+    #如果page給的不是是數字形式,就回傳空的資料
     elif not page.isdigit():
         response_msg={
                       "nextPage":None,
@@ -32,6 +34,7 @@ def get_attraction():
 
 @fetch.route('/api/attraction/<attractionID>',methods=["GET"])
 def get_attraction_id(attractionID):
+    #如果給的景點id不是數字形式,回傳錯誤訊息
     if not attractionID.isdigit():
         response_msg = {
             "error": True,

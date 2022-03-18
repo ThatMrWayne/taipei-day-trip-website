@@ -13,7 +13,7 @@ async function getSightData(page){
     try{
         let url = `/api/attractions?page=${page}`
         let sightData = await fetch(url);
-        if(sightData.ok){
+        if(sightData.ok){ //檢查是否為200
             let parsed_sightData = await sightData.json();
             //將取得的資料塞到global_sight_data
             for(let i=0;i<parsed_sightData.data.length;i++){
@@ -37,7 +37,7 @@ async function getSightDataKeyword(keyword_next_page,keyword){
         let url = `/api/attractions?page=${keyword_next_page}&keyword=${keyword}`;
         //console.log(url);
         let sightData = await fetch(url);
-        if(sightData.ok){
+        if(sightData.ok){  //檢查是否為200
             let parsed_sightData = await sightData.json();
             //console.log(parsed_sightData);
             if(parsed_sightData.data.length!==0){

@@ -28,9 +28,10 @@ function closeBox(){
 };
 
 //框框互換
-function switchBox(flag){
+function switchBox(flag){ 
     let bg = document.getElementsByClassName('bg')[0];
-    if(flag){
+    //flag true代表有帳戶,false沒有帳戶
+    if(flag){ 
         let box = document.getElementsByClassName("signupbox")[0];
         bg.removeChild(box);
         showBox(sign.signIn,true,bg);
@@ -49,6 +50,167 @@ function createBack(){
     background.className = "bg";
     return background;
 };
+
+//處理送出註冊資訊
+async function sendAuthSignUp(data){
+    try{
+        let response = await fetch('/api/user',{
+                                     method: 'post',
+                                     body: data,
+                                     headers: { 'Content-Type': 'application/json'}
+                                        });
+        let result = await response.json();                                
+        if(response.ok){ //200情況下 
+               alert('註冊成功,請登入') ;
+               //讓畫面轉到登入畫面
+               switchBox(true);
+        }else if(response.status === 400){ //如果是400,有可能是1.email重複 2.註冊信箱或密碼格式錯誤
+            alert(result.message)
+            //清空信箱和密碼輸入框
+            let mail_input = document.querySelector('.email');
+            let pass_input = document.querySelector('.pass');
+            mail_input.value='';
+            pass_input.value=''; 
+        }else if(response.status === 500){ //如果是500,代表伺服器(資料庫)內部錯誤
+            alert(result.message)
+            closeBox();
+        };
+    }catch(message){
+        console.log(`${message}`)
+        throw Error('Fetching was not ok!!.')
+    }    
+}
+
+//處理登出事件 假設登出回到首頁
+async function handleSignOut(){
+    try{
+        let response = await fetch('/api/user',{method: 'delete'});
+        let result = await response.json();    
+        console.log(result);                            
+        if(response.ok){ //200情況下 
+               console.log('登出成功') ;
+               localStorage.removeItem('JWT');
+               window.location.reload('/')
+        }
+    }catch(message){
+        console.log(`${message}`)
+        throw Error('Fetching was not ok!!.')
+    }    
+}
+
+
+
+//處理送出登入資訊
+async function sendAuthSignIn(data){
+    try{
+        let response = await fetch('/api/user',{
+                                     method: 'patch',
+                                     body: data,
+                                     headers: { 'Content-Type': 'application/json'}
+                                        });
+        let result = await response.json();                                
+        if(response.ok){  //200情況下 
+                alert('登入成功'); 
+                closeBox();
+                let login = document.querySelector('.login');
+                while(login.firstChild){
+                    login.removeChild(login.firstChild)
+                }
+                //右上角放小頭像
+                let img  = new Image();
+                img.src="/static/member.png";
+                img.id = "signout";
+                img.addEventListener('click',function(){
+                    let drop = document.getElementById('myDropdown');
+                    drop.classList.toggle('show-dropdown');
+                });
+                login.appendChild(img);
+                //下拉選單
+                let dropdownBox = document.createElement('div');
+                dropdownBox.classList.add("dropdown-content");
+                dropdownBox.id="myDropdown";
+                let mailBox = document.createElement('div');
+                mailBox.id = "user-email";
+                const email = JSON.parse(data).email;
+                mailBox.appendChild(document.createTextNode(`${email}`));
+                let logoutBtn = document.createElement('div');
+                logoutBtn.id="logout";
+                logoutBtn.appendChild(document.createTextNode("登出"));
+                logoutBtn.addEventListener('click',handleSignOut);
+                dropdownBox.appendChild(mailBox);
+                dropdownBox.appendChild(logoutBtn);
+                login.appendChild(dropdownBox);
+                //把登入成功得到的JWT 存在local storage,這邊要注意的是,fetch回來的response headers object
+                //是iterable 物件,無法直接像plain object取得裡面的東西,要用迭代的方式取得
+                let test = [];
+                response.headers.forEach(function(o){test.push(o)});
+                localStorage.setItem('JWT',test[0]);
+        }else if(response.status === 400){ //代表1.密碼錯誤2.沒有此信箱會員
+                alert(result.message) ;
+                let mail_input = document.querySelector('.email');
+                let pass_input = document.querySelector('.pass');
+                mail_input.value='';
+                pass_input.value=''; 
+        }else if(response.status === 500){ //如果是500,代表伺服器(資料庫)內部錯誤
+                alert(result.message)
+                closeBox();
+        };
+    }catch(message){
+        console.log(`${message}`)
+        throw Error('Fetching was not ok!!.')
+    }    
+
+}
+
+
+//處理註冊事件
+function handleSignUp(){
+    let email = document.querySelector('.email').value;
+    let password = document.querySelector('.pass').value;
+    let name = document.querySelector('.name').value;
+    //先在前端驗證看看有沒有確實輸入或輸入正不正確
+    if ((!name||!email) || (!password)){
+        alert('請確實填寫註冊資訊欄位')
+    }else{
+        let emailRegex = /^(?!\.{1,2})(?![^\.]*\.{2})(?!.*\.{2}@)(?=[a-zA-Z0-9\.!#\$%&\'\*\+\/=?\^_{\|}~-]+@{1}(?:[A-Za-z\d]+\.{1})+[a-zA-Z]+$)(?!.*@{2,}).*/g;
+        let passwordRegex = /^(?=\w{8,16}$)(?=(?:[^A-Z]*[A-Z]){3})(?=[^a-z]*[a-z])(?=[^\d]*\d).*/g;
+        //檢查看格式正不正確
+        if(emailRegex.test(email)&&passwordRegex.test(password)){
+            let data = {  //註冊資訊
+                "name":name,
+                "email":email,
+                "password":password,
+            }
+            let req = JSON.stringify(data); //將註冊資料轉成json格式
+            sendAuthSignUp(req);
+        }else{
+            alert('信箱或密碼輸入有誤，請重新輸入\n您的密碼必須包含:\n八至十六個字元(僅限英文字母/數字)\n至少三個大寫英文字母\n至少一個小寫英文字母\n至少一個阿拉伯數字');
+            //清空信箱和密碼輸入框
+            let mail_input = document.querySelector('.email');
+            let pass_input = document.querySelector('.pass');
+            mail_input.value='';
+            pass_input.value=''; 
+        };
+    };
+}
+
+
+//處理登入事件
+function handleSignIn(){
+    let email = document.querySelector('.email').value;
+    let password = document.querySelector('.pass').value;
+    if (!email || !password){
+        alert('請確實填寫登入資訊')
+    }else{
+        let data = {
+            'email':email,
+            'password':password,
+        }
+        let req = JSON.stringify(data); //轉成json格式
+        sendAuthSignIn(req);
+    }    
+
+}
 
 
 //show出登入/註冊框
@@ -103,9 +265,15 @@ function showBox(obj,flag,background){//flag true代表有帳戶,false沒有帳�
     sign_content.appendChild(input_pass);
     //登入,註冊鈕
     let button = document.createElement("div");
-    button.setAttribute("id","signbtn");
+    button.setAttribute("id","signbtn");   
     let button_text = document.createTextNode(obj.btn_txt);
     button.appendChild(button_text);
+    //不管是登入或註冊鈕,在創造出來的時候,就要加上eventlistener,目的是送出ajax到後端驗證的路由
+    if(flag){
+        button.addEventListener('click',function(){handleSignIn()})
+    }else{
+        button.addEventListener('click',function(){handleSignUp()})
+    };
     sign_content.appendChild(button);
     //還沒有帳戶or已經有帳戶？
     let goto = document.createElement("div");
@@ -123,21 +291,94 @@ function showBox(obj,flag,background){//flag true代表有帳戶,false沒有帳�
     return background;
 }
 
-function init_sign(){
+
+
+async function sendJWT(jwt){
+    try{
+        let response = await fetch('/api/user',{
+                                     method: 'get',
+                                     headers: {"Authorization" : `Bearer ${jwt}`}
+                                    });
+        let result = await response.json();       
+        console.log(result)                     
+        if(response.ok){
+            if(result.data!==null){
+                //右上角放小頭像
+                let login = document.querySelector('.login');
+                let img  = new Image();
+                img.src="/static/member.png";
+                img.id = "signout";
+                img.addEventListener('click',function(){
+                    let drop = document.getElementById('myDropdown');
+                    drop.classList.toggle('show-dropdown');
+                });
+                login.appendChild(img);
+                //下拉選單
+                let dropdownBox = document.createElement('div');
+                dropdownBox.classList.add("dropdown-content");
+                dropdownBox.id="myDropdown";
+                let mailBox = document.createElement('div');
+                mailBox.id = "user-email";
+                mailBox.appendChild(document.createTextNode(`${result.data.email}`));
+                let logoutBtn = document.createElement('div');
+                logoutBtn.id="logout";
+                logoutBtn.appendChild(document.createTextNode("登出"));
+                logoutBtn.addEventListener('click',handleSignOut);
+                dropdownBox.appendChild(mailBox);
+                dropdownBox.appendChild(logoutBtn);
+                login.appendChild(dropdownBox);
+            }else{
+                console.log('JWT已經失效');
+                localStorage.removeItem("JWT");
+                window.location.replace('/');
+            }
+        }else{
+            console.log('有錯誤喔');
+            localStorage.removeItem("JWT");
+            window.location.replace('/');
+        };
+    }catch(message){
+        console.log(`${message}`)
+        throw Error('Fetching was not ok!!.')
+    }    
+} 
+
+
+//初始化預定行程,登入,註冊鈕
+function init_sign_without_jwt(){
+    let login = document.querySelector(".login");
+    let login_btn = document.createElement("span");
+    login_btn.id="signin";
+    login_btn.appendChild(document.createTextNode("登入"));
+    let span2 = document.createElement("span");
+    span2.appendChild(document.createTextNode("/"));
+    let signup_btn = document.createElement("span");
+    signup_btn.id="signup";
+    signup_btn.appendChild(document.createTextNode("註冊"));
     //按下登入事件
-    let login_btn = document.getElementById("signin");
     login_btn.addEventListener('click',function(){
         let bg = showBox(sign.signIn,true,createBack());
         document.body.appendChild(bg);
     });
-    //按下註冊事件
-    let signup_btn = document.getElementById("signup");
+     //按下註冊事件
     signup_btn.addEventListener('click',function(){
         let bg = showBox(sign.signUp,false,createBack());
         document.body.appendChild(bg);
-    });
-};
+    });    
+    login.appendChild(login_btn);
+    login.appendChild(span2);
+    login.appendChild(signup_btn);
+}
 
+
+function init_sign(){
+    let jwt = localStorage.getItem("JWT");
+    if(jwt){ //如果已經有jwt,加在header上送出request
+        sendJWT(jwt)
+    }else{  
+        init_sign_without_jwt();  
+    };
+}    
 
 
 window.addEventListener('load',init_sign);

@@ -1,0 +1,191 @@
+import mysql.connector
+
+
+#base class
+class Connection:
+    def __init__(self,cnx):
+        self.cnx = cnx
+
+
+class Sight_connection(Connection):
+
+    def get_attrac_page(self,page,keyword=None):
+        msg,sight_data,nextPage = None,None,None
+        #如果沒有給Page 視為0
+        if not page:
+            page = 0       
+
+        cursor= self.cnx.cursor(dictionary=True)
+        try:
+            if keyword:
+                keyword_query = ("SELECT s1.* , s2.url AS images from "
+                "(SELECT * FROM sight WHERE name LIKE CONCAT('%',%(key)s,'%') ORDER BY id LIMIT %(st)s,13) AS s1 "
+                "INNER JOIN image AS s2 ON s1.id = s2.sight_id")
+                cursor.execute(keyword_query,{'key':keyword,'st':int(page)*12})
+                sight_data = cursor.fetchall() #可能是空的[]
+            else:
+                normal_query = ("SELECT s1.* , s2.url AS images from "
+                "(SELECT * FROM sight ORDER BY id LIMIT %(st)s,13) AS s1 "
+                "INNER JOIN image AS s2 ON s1.id = s2.sight_id")
+                cursor.execute(normal_query,{'st':int(page)*12})
+                sight_data = cursor.fetchall() #可能是空的[]    
+
+            if sight_data:
+                final = []
+                current_sight = sight_data[0]
+                current_sight['images'] = [sight_data[0]['images']]
+                current_id = sight_data[0]['id']
+                for data in sight_data[1:]:
+                    if data['id']==current_id:
+                        current_sight['images'].append(data['images'])
+                    else:
+                        final.append(current_sight)
+                        current_sight=data
+                        current_sight['images'] = [current_sight['images']]
+                        current_id = current_sight['id']
+                final.append(current_sight)
+            else:
+                final=[]
+
+            #查看有沒有下一頁
+            try:
+                next_item = final[12]
+                nextPage = int(page)+1
+            except:
+                nextPage = None      
+
+            result={
+                    "nextPage":nextPage,
+                    "data":final[:12] #回傳前12筆就好
+                    }  
+        except mysql.connector.Error as err:
+            print(err)
+            msg = err.msg      
+        finally:
+            cursor.close()
+            self.cnx.close()   
+            if msg:
+                return msg
+            else:
+                return result
+
+    def get_attrac_by_id(self,attractionid):
+        msg,result = None,None
+
+        cursor = self.cnx.cursor(dictionary=True)
+        try:
+            query = "SELECT * FROM sight WHERE id = %(attracId)s"
+            cursor.execute(query,{"attracId":int(attractionid)})
+            sight_data = cursor.fetchall()
+            #如果有資料才去搜尋圖片url
+            if sight_data:
+                sightid = sight_data[0]['id']
+                cursor.execute("SELECT url FROM image WHERE sight_id = %(sightid)s ",{"sightid":sightid})
+                img_data = [i['url'] for i in cursor.fetchall()]
+                sight_data[0]['image']=img_data
+                sight_data[0]['latitude']=float(sight_data[0]['latitude'])
+                sight_data[0]['longitude']=float(sight_data[0]['longitude'])
+                result={'data':sight_data[0]}
+            else:
+                result={'data':[]}        
+        except mysql.connector.Error as err:
+            print(err)
+            msg = err.msg
+        finally:
+            cursor.close()
+            self.cnx.close()   
+            if msg:
+                return msg
+            else:
+                return result                     
+
+
+class Auth_connection(Connection):
+    def check_if_member_exist(self,email):
+        result,msg=None,None
+        cursor = self.cnx.cursor(dictionary=True)
+        query = "SELECT * FROM members WHERE email=%(email)s"
+        try:
+            cursor.execute(query, {'email': email})
+            result = cursor.fetchone()
+        except mysql.connector.Error as err:
+            print(err)
+            msg = err.msg
+        finally:
+            cursor.close()
+            self.cnx.close()
+            if msg:
+                return msg
+            elif result:
+                return True
+            else:
+                return False
+
+    def insert_new_member(self,name,email,hash_password):
+        result, msg = None, None
+        cursor = self.cnx.cursor(dictionary=True)
+        query = "INSERT INTO members VALUES (DEFAULT,%(name)s,%(email)s,%(password)s,DEFAULT)"
+        input_data = {'name': name, 'email': email, 'password': hash_password}
+        try:
+            cursor.execute(query, input_data)
+            self.cnx.commit()
+            result = True
+        except mysql.connector.Error as err:
+            print(err)
+            msg = err.msg
+        finally:
+            cursor.close()
+            self.cnx.close()
+            if msg:  #新增會員失敗  
+                return msg
+            elif result:
+                return True #新增會員成功
+
+
+    def confirm_member_information(self,email,password):
+        result, msg = None, None
+        cursor = self.cnx.cursor(dictionary=True)
+        query = "SELECT name, email, hash_password FROM members WHERE email=%(email)s"
+        input_data = {'email': email}
+        try:
+            cursor.execute(query, input_data)
+            result = cursor.fetchone()          
+        except mysql.connector.Error as err:
+            print(err)
+            msg = err.msg
+        finally:
+            cursor.close()
+            self.cnx.close()
+            if msg:  #查詢失敗
+                return msg
+            elif result:
+                return result #有此會員
+            else:
+                return False #根本沒有這個會員      
+
+    def retrieve_member_information(self,email):
+        result, msg = None, None
+        cursor = self.cnx.cursor(dictionary=True)
+        query = "SELECT member_id, name, email FROM members WHERE email=%(email)s"
+        input_data = {'email': email}
+        try:
+            cursor.execute(query, input_data)
+            result = cursor.fetchone()          
+        except mysql.connector.Error as err:
+            print(err)
+            msg = err.msg
+        finally:
+            cursor.close()
+            self.cnx.close()
+            if msg:  #查詢失敗
+                return msg
+            elif result:
+                return result #查詢成功
+            else:
+                return False #根本沒有這個會員  
+
+        
+
+
+
+                

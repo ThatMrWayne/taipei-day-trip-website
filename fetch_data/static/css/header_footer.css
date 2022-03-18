@@ -112,6 +112,7 @@ body{
     right:0px;
     top:22px;
     border: 0.5px #f1f1f1 solid;
+    border-radius: 5px;
   }
 
 .dropdown-content div{
@@ -128,6 +129,8 @@ body{
 #logout{
     padding-top: 3px;
     padding-bottom: 3px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
 @keyframes slide{

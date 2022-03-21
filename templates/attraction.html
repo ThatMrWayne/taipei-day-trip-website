@@ -50,11 +50,11 @@
                 <div class="sight-name"><!--平安鐘--></div>
                 <div class="type-mrt"><!--公共藝術at行天宮--></div>
                 <div class="booking">
-                    <form action="">
+                    <form class="schedule-form">
                         <span>訂購導覽行程</span>
                         <span class="small">此景點為中心的一日行程，帶您探索城市故事</span>
                         <div class="choose-date">
-                            <span>選擇時間 :</span><input type="date" name="date"/>
+                            <span>選擇時間 :</span><input id="date" type="date" name="date"/>
                         </div>
                         <div class="choose-time">
                             <span>選擇時間 :</span><input id="choice1" type="radio" name="time" value="morning"/><label for="choice1" class="small">上半天</label><input id="choice2" type="radio" name="time" value="afternoon"/><label for="choice2" class="small">下半天</label>
@@ -88,6 +88,7 @@
     </div>
     <script type="text/javascript" src="{{url_for('fetch.static',filename='/js/sign.js')}}"></script>
     <script type="text/javascript" src="{{url_for('fetch.static',filename='/js/carousel.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('book.static',filename='/js/booking.js')}}"></script>
 </body>
 </html>
 

@@ -64,9 +64,6 @@ function showMessage(msg,flag,signup_result){
 
 
 
-
-
-
 //關掉框框
 function closeBox(){
     document.body.classList.toggle("stop-scrolling");
@@ -339,7 +336,7 @@ async function sendJWT(jwt){
                                      headers: {"Authorization" : `Bearer ${jwt}`}
                                     });
         let result = await response.json();       
-        console.log(result)                     
+        //console.log(result)                     
         if(response.ok){
             if(result.data!==null){
                 //右上角放小頭像
@@ -366,6 +363,7 @@ async function sendJWT(jwt){
                 dropdownBox.appendChild(mailBox);
                 dropdownBox.appendChild(logoutBtn);
                 login.appendChild(dropdownBox);
+                return true;
             }else{
                 console.log('JWT已經失效');
                 localStorage.removeItem("JWT");
@@ -383,7 +381,7 @@ async function sendJWT(jwt){
 } 
 
 
-//初始化預定行程,登入,註冊鈕
+//初始化登入,註冊鈕
 function init_sign_without_jwt(){
     let login = document.querySelector(".login");
     let login_btn = document.createElement("span");
@@ -413,11 +411,93 @@ function init_sign_without_jwt(){
 function init_sign(){
     let jwt = localStorage.getItem("JWT");
     if(jwt){ //如果已經有jwt,加在header上送出request
-        sendJWT(jwt);
+        let promise = sendJWT(jwt);
+        //處理是在booking頁面下的情況
+        if(window.location.href.split('/').includes("booking")){
+            promise.then((result)=>{
+                if(result){
+                    //如果jwt通過驗證,才要動態render使用者的預定行程資料
+                    console.log(result);
+                    renderUserSchedule(true);
+                }
+            }).catch(()=>{
+                //不好意思頁面載入時發生錯誤
+                renderUserSchedule(false,true);
+            });
+        }
     }else{  
         init_sign_without_jwt();  
+        //沒有jwt,動態render把頁面變成請先登入
+        if(window.location.href.split('/').includes("booking")){
+            renderUserSchedule(false,false);
+        }
+        
+
     };
 }    
 
 
+//要去booking頁面前要先驗證JWT
+async function validateJWT(jwt){
+    try{
+        let response = await fetch('/api/user',{
+                                     method: 'get',
+                                     headers: {"Authorization" : `Bearer ${jwt}`}
+                                    });
+        let result = await response.json();                            
+        if(response.ok){
+            //如果jwt驗證ok才可以去booking.html頁面
+            if(result.data!==null){
+               window.location.href="/booking";
+            }else{
+                console.log('JWT已經失效');
+                localStorage.removeItem("JWT");
+                window.location.replace('/');
+            }
+        }else{
+            console.log('有錯誤喔');
+            localStorage.removeItem("JWT");
+            window.location.replace('/');
+        };
+    }catch(message){
+        console.log(`${message}`)
+        throw Error('Fetching was not ok!!.')
+    }    
+} 
+
+//在登入框按鈕下方show請先登入
+function pleaseSignIn(){
+    let button = document.getElementById("signbtn");
+    let signin_content = document.querySelector(".content");
+    let message_div  = document.createElement("div");
+    message_div.appendChild(document.createTextNode("請先登入"));
+    message_div.classList.add('message');
+    signin_content.style.height = "270px";
+    button.after(message_div);      
+}
+
+
+//按下預定行程的事件處理
+function handleBooking(){
+    //要按預定行程,要先確認有沒有登入
+    let jwt = localStorage.getItem("JWT");
+    if(jwt){
+        validateJWT(jwt);
+    }else{ //如果沒有jwt,代表還沒登入,show出登入框
+        let bg = showBox(sign.signIn,true,createBack());
+        document.body.appendChild(bg);
+        pleaseSignIn();
+    }
+}
+
+//註冊"預定行程"事件
+function init_booking(){
+    let booking_schedule = document.querySelector(".schedule");
+    booking_schedule.addEventListener("click",handleBooking);
+}
+
+
+
 window.addEventListener('load',init_sign);
+window.addEventListener("load",init_booking);
+

@@ -207,7 +207,8 @@
 /**登入註冊成功與否訊息**/
 .message{
     text-align: center;
-    color:red
+    color:#4faac1;
+    margin-bottom: 3px;
 }
 
 .condition{

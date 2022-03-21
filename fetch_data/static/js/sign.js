@@ -18,6 +18,53 @@ let sign = {
 };
 
 
+//show登入註冊訊息
+function showMessage(msg,flag,signup_result){
+    if(flag){
+        let button = document.getElementById("signbtn");
+        let signin_content = document.querySelector(".content");
+        let previous_message_div = document.querySelector(".message");
+        if (previous_message_div){
+            signin_content.removeChild(previous_message_div);
+        };
+        let fail_div  = document.createElement("div");
+        fail_div.appendChild(document.createTextNode(msg));
+        fail_div.classList.add('message');
+        signin_content.style.height = "270px";
+        button.after(fail_div);    
+    }else{
+        if(signup_result){
+            let button = document.getElementById("signbtn");
+            let signup_content = document.querySelector(".content");
+            let previous_message_div = document.querySelector(".message");
+            if (previous_message_div){
+                signup_content.removeChild(previous_message_div);
+            };
+            let succeed_div  = document.createElement("div");
+            succeed_div.appendChild(document.createTextNode(msg));
+            succeed_div.classList.add('message');
+            signup_content.style.height = "325px";
+            button.after(succeed_div);
+        }else{
+            let button = document.getElementById("signbtn");
+            let signup_content = document.querySelector(".content");
+            let previous_message_div = document.querySelector(".message");
+            if (previous_message_div){
+                signup_content.removeChild(previous_message_div);
+            };
+            let fail_div  = document.createElement("div");
+            fail_div.appendChild(document.createTextNode(msg));
+            fail_div.classList.add('message');
+            signup_content.style.height = "325px";
+            button.after(fail_div);    
+        }      
+        
+    }    
+}
+
+
+
+
 
 
 //關掉框框
@@ -42,6 +89,7 @@ function switchBox(flag){
     }
 };
 
+//創造背景,讓頁面無法滑動
 function createBack(){
     //讓頁面無法滑動
     document.body.classList.toggle("stop-scrolling");
@@ -60,20 +108,17 @@ async function sendAuthSignUp(data){
                                      headers: { 'Content-Type': 'application/json'}
                                         });
         let result = await response.json();                                
-        if(response.ok){ //200情況下 
-               alert('註冊成功,請登入') ;
-               //讓畫面轉到登入畫面
-               switchBox(true);
+        if(response.ok){ //200情況下
+                showMessage("註冊成功，請登入",false,true);           
         }else if(response.status === 400){ //如果是400,有可能是1.email重複 2.註冊信箱或密碼格式錯誤
-            alert(result.message)
+            showMessage(result.message,false,false);
             //清空信箱和密碼輸入框
             let mail_input = document.querySelector('.email');
             let pass_input = document.querySelector('.pass');
             mail_input.value='';
             pass_input.value=''; 
         }else if(response.status === 500){ //如果是500,代表伺服器(資料庫)內部錯誤
-            alert(result.message)
-            closeBox();
+            showMessage(result.message,false,false);
         };
     }catch(message){
         console.log(`${message}`)
@@ -81,7 +126,7 @@ async function sendAuthSignUp(data){
     }    
 }
 
-//處理登出事件 假設登出回到首頁
+//處理登出事件 
 async function handleSignOut(){
     try{
         let response = await fetch('/api/user',{method: 'delete'});
@@ -90,7 +135,7 @@ async function handleSignOut(){
         if(response.ok){ //200情況下 
                console.log('登出成功') ;
                localStorage.removeItem('JWT');
-               window.location.reload('/')
+               window.location.reload();
         }
     }catch(message){
         console.log(`${message}`)
@@ -110,50 +155,23 @@ async function sendAuthSignIn(data){
                                         });
         let result = await response.json();                                
         if(response.ok){  //200情況下 
-                alert('登入成功'); 
-                closeBox();
-                let login = document.querySelector('.login');
-                while(login.firstChild){
-                    login.removeChild(login.firstChild)
-                }
-                //右上角放小頭像
-                let img  = new Image();
-                img.src="/static/member.png";
-                img.id = "signout";
-                img.addEventListener('click',function(){
-                    let drop = document.getElementById('myDropdown');
-                    drop.classList.toggle('show-dropdown');
-                });
-                login.appendChild(img);
-                //下拉選單
-                let dropdownBox = document.createElement('div');
-                dropdownBox.classList.add("dropdown-content");
-                dropdownBox.id="myDropdown";
-                let mailBox = document.createElement('div');
-                mailBox.id = "user-email";
-                const email = JSON.parse(data).email;
-                mailBox.appendChild(document.createTextNode(`${email}`));
-                let logoutBtn = document.createElement('div');
-                logoutBtn.id="logout";
-                logoutBtn.appendChild(document.createTextNode("登出"));
-                logoutBtn.addEventListener('click',handleSignOut);
-                dropdownBox.appendChild(mailBox);
-                dropdownBox.appendChild(logoutBtn);
-                login.appendChild(dropdownBox);
+                //alert('登入成功'); 
                 //把登入成功得到的JWT 存在local storage,這邊要注意的是,fetch回來的response headers object
                 //是iterable 物件,無法直接像plain object取得裡面的東西,要用迭代的方式取得
                 let test = [];
                 response.headers.forEach(function(o){test.push(o)});
                 localStorage.setItem('JWT',test[0]);
+                closeBox();
+                window.location.reload();
         }else if(response.status === 400){ //代表1.密碼錯誤2.沒有此信箱會員
-                alert(result.message) ;
+                showMessage(result.message,true,null)
+                //清空輸入框
                 let mail_input = document.querySelector('.email');
                 let pass_input = document.querySelector('.pass');
                 mail_input.value='';
                 pass_input.value=''; 
         }else if(response.status === 500){ //如果是500,代表伺服器(資料庫)內部錯誤
-                alert(result.message)
-                closeBox();
+                showMessage(result.message,true,null)
         };
     }catch(message){
         console.log(`${message}`)
@@ -170,7 +188,7 @@ function handleSignUp(){
     let name = document.querySelector('.name').value;
     //先在前端驗證看看有沒有確實輸入或輸入正不正確
     if ((!name||!email) || (!password)){
-        alert('請確實填寫註冊資訊欄位')
+        showMessage('請確實填寫註冊資訊欄位',false,false);
     }else{
         let emailRegex = /^(?!\.{1,2})(?![^\.]*\.{2})(?!.*\.{2}@)(?=[a-zA-Z0-9\.!#\$%&\'\*\+\/=?\^_{\|}~-]+@{1}(?:[A-Za-z\d]+\.{1})+[a-zA-Z]+$)(?!.*@{2,}).*/g;
         let passwordRegex = /^(?=\w{8,16}$)(?=(?:[^A-Z]*[A-Z]){3})(?=[^a-z]*[a-z])(?=[^\d]*\d).*/g;
@@ -184,7 +202,28 @@ function handleSignUp(){
             let req = JSON.stringify(data); //將註冊資料轉成json格式
             sendAuthSignUp(req);
         }else{
-            alert('信箱或密碼輸入有誤，請重新輸入\n您的密碼必須包含:\n八至十六個字元(僅限英文字母/數字)\n至少三個大寫英文字母\n至少一個小寫英文字母\n至少一個阿拉伯數字');
+            let button = document.getElementById("signbtn");
+            let signup_content = document.querySelector(".content");
+            let previous_message_div = document.querySelector(".message");
+            if (previous_message_div){
+                signup_content.removeChild(previous_message_div);
+            };
+            let fail_div  = document.createElement("div");
+            let span = document.createElement("span");
+            span.appendChild(document.createTextNode("信箱或密碼輸入有誤。您的密碼必須包含:"));
+            conditions=["八至十六個字元(僅限英文字母/數字)","至少三個大寫英文字母","至少一個小寫英文字母","至少一個阿拉伯數字"]
+            condition_ul_tag = document.createElement("ul");
+            condition_ul_tag.classList.add("condition");
+            for(let i = 0;i<conditions.length;i++){
+                let li = document.createElement("li");
+                li.appendChild(document.createTextNode(conditions[i]));
+                condition_ul_tag.appendChild(li);
+            }; 
+            fail_div.appendChild(span);
+            fail_div.appendChild(condition_ul_tag);
+            fail_div.classList.add('message');
+            signup_content.style.height = "410px";
+            button.after(fail_div);       
             //清空信箱和密碼輸入框
             let mail_input = document.querySelector('.email');
             let pass_input = document.querySelector('.pass');
@@ -200,7 +239,7 @@ function handleSignIn(){
     let email = document.querySelector('.email').value;
     let password = document.querySelector('.pass').value;
     if (!email || !password){
-        alert('請確實填寫登入資訊')
+        showMessage('請確實填寫登入資訊',true,null)
     }else{
         let data = {
             'email':email,
@@ -374,7 +413,7 @@ function init_sign_without_jwt(){
 function init_sign(){
     let jwt = localStorage.getItem("JWT");
     if(jwt){ //如果已經有jwt,加在header上送出request
-        sendJWT(jwt)
+        sendJWT(jwt);
     }else{  
         init_sign_without_jwt();  
     };

@@ -64,16 +64,16 @@ class DataBase():
             return Sight_connection(cnx)
         except mysql.connector.Error as err: 
             print(err)
-            return(err.msg)
+            return "error"
 
     #取得驗證登入註冊相關操作的自定義connection物件
     def get_auth_cnx(self):
         try:
             cnx = self.cnxpool.get_connection()
             return Auth_connection(cnx)
-        except mysql.connector.Error as err: #這邊除錯部分要再處理2021/3/15
+        except mysql.connector.Error as err: 
             print(err)
-            return(err.msg)             
+            return "error"            
 
              
 db = DataBase()           

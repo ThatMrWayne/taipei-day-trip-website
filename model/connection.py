@@ -65,7 +65,7 @@ class Sight_connection(Connection):
             cursor.close()
             self.cnx.close()   
             if msg:
-                return msg
+                return "error"
             else:
                 return result
 
@@ -95,7 +95,7 @@ class Sight_connection(Connection):
             cursor.close()
             self.cnx.close()   
             if msg:
-                return msg
+                return "error"
             else:
                 return result                     
 
@@ -115,7 +115,7 @@ class Auth_connection(Connection):
             cursor.close()
             self.cnx.close()
             if msg:
-                return msg
+                return "error"
             elif result:
                 return True
             else:
@@ -137,12 +137,12 @@ class Auth_connection(Connection):
             cursor.close()
             self.cnx.close()
             if msg:  #新增會員失敗  
-                return msg
+                return "error"
             elif result:
                 return True #新增會員成功
 
 
-    def confirm_member_information(self,email,password):
+    def confirm_member_information(self,email):
         result, msg = None, None
         cursor = self.cnx.cursor(dictionary=True)
         query = "SELECT name, email, hash_password FROM members WHERE email=%(email)s"
@@ -157,7 +157,7 @@ class Auth_connection(Connection):
             cursor.close()
             self.cnx.close()
             if msg:  #查詢失敗
-                return msg
+                return "error"
             elif result:
                 return result #有此會員
             else:
@@ -178,11 +178,10 @@ class Auth_connection(Connection):
             cursor.close()
             self.cnx.close()
             if msg:  #查詢失敗
-                return msg
+                return "error"
             elif result:
                 return result #查詢成功
-            else:
-                return False #根本沒有這個會員  
+ 
 
         
 

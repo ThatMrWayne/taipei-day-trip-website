@@ -166,11 +166,103 @@ function init_carousel() {
     let afternoon = document.getElementById("choice2");
     morning.addEventListener('click',changeFee);
     afternoon.addEventListener('click',changeFee);
+    //按下"開始預定行程"的處理事件
+    let start_booking = document.getElementById("book-btn");
+    start_booking.addEventListener("click",submitBooking);
+    
+
+}
+
+
+
+
+//要去提交行程資料前頁面前要先驗證JWT
+async function validateJWTbeforeBooking(jwt){
+    try{
+        let response = await fetch('/api/user',{
+                                     method: 'get',
+                                     headers: {"Authorization" : `Bearer ${jwt}`}
+                                    });
+        let result = await response.json();                            
+        if(response.ok){
+            //如果jwt驗證ok才可以提交預定行程資料
+            if(result.data!==null){
+               //開始檢查和時間有沒有都勾好     
+               let check_result = confirmDateandTime();
+               if(check_result){ //如果時間日期都有選好,才送出預定行程資料
+                        
+               }
+
+
+
+
+            }else{
+                console.log('JWT已經失效');
+                localStorage.removeItem("JWT");
+                window.location.replace('/');
+            }
+        }else{
+            console.log('有錯誤喔');
+            localStorage.removeItem("JWT");
+            window.location.replace('/');
+        };
+    }catch(message){
+        console.log(`${message}`)
+        throw Error('Fetching was not ok!!.')
+    }    
+} 
+
+function confirmDateandTime(){
+    //先確認日期和時間都有選
+    let form = document.querySelector(".schedule-form");
+    let message = document.querySelector(".submit-message")
+    if(message){
+        form.removeChild(message)
+    }
+    let morning = document.getElementById("choice1");
+    let afternoon = document.getElementById("choice2");
+    let date = document.getElementById("date");
+    let start_booking = document.getElementById("book-btn");
+    let div = document.createElement("div");
+    div.classList.add("submit-message");
+    div.style.color = "red";
+    //日期部分
+    let choose_date = new Date(date.value); //選擇的日期
+    const choose_date_unixtimestamp = Math.floor(choose_date.getTime() / 1000);
+    let today = new Date();  //當日
+    const current_unixtimestamp = Math.floor(today.getTime() / 1000);
+    if((!date.value) || (!morning.checked && !afternoon.checked)){
+        //在開始預定行程下方加上訊息
+        div.appendChild(document.createTextNode("請確認日期與時間皆有選擇"));
+        start_booking.after(div);
+        return null;
+    }else if(choose_date_unixtimestamp <= current_unixtimestamp){
+        div.appendChild(document.createTextNode("請選擇晚於今天的日期"));
+        start_booking.after(div);
+        return null
+    }else{  //沒問題才送出預定行程ajax request
+        return true
+    }
+}
+
+
+function submitBooking(e){
+    e.preventDefault();
+    //首先第一件事,檢查有無登入
+    let jwt = localStorage.getItem("JWT");
+    if(jwt){
+        validateJWTbeforeBooking(jwt);
+    }else{ //如果沒有jwt,代表還沒登入,show出登入框
+        let bg = showBox(sign.signIn,true,createBack());
+        document.body.appendChild(bg);
+        pleaseSignIn();
+    }
 }
 
 
 
 window.addEventListener('load', init_carousel);
+
 
 rightButton.addEventListener('click', function () {
     //圖片部分

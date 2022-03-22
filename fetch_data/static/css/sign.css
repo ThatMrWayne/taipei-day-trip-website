@@ -203,3 +203,17 @@
     cursor:pointer;
     color:#4faac1; 
 }
+
+/**登入註冊成功與否訊息**/
+.message{
+    text-align: center;
+    color:#4faac1;
+    margin-bottom: 3px;
+}
+
+.condition{
+    padding-left: 24px;
+    margin: 0px;
+    text-align: left;
+    
+}

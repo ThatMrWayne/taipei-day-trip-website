@@ -127,11 +127,10 @@ def handle_signin(request):
                 return jsonify(response_msg), 500 
             elif result: #表示有此會員
                 #接著檢查密碼
-                print('hhehehe')
                 check_result = check_password_hash(result["hash_password"],password)
                 if check_result:
                     #產生JWT_token
-                    access_token = create_access_token(identity=email,expires_delta=datetime.timedelta(days=5))
+                    access_token = create_access_token(identity=json.dumps({'email':email,'id':result["member_id"]}),expires_delta=datetime.timedelta(days=5))
                     response_msg = {"ok":True,}
                     res = make_response(json.dumps(response_msg,ensure_ascii=False),200)
                     res.headers["access_token"] = access_token #把jwt塞在response header
@@ -156,8 +155,9 @@ def handle_get_user_data(request):
     connection = db.get_auth_cnx() #取得驗證登入註冊相關操作的自定義connection物件
     if isinstance(connection,Connection): #如果有順利取得連線
         current_user = get_jwt_identity() #取得存在JWT裡的email資訊
-        #print("目前使用者:",current_user)
-        result = connection.retrieve_member_information(current_user) 
+        user_email = json.loads(current_user)["email"]
+        print("目前使用者:",current_user)
+        result = connection.retrieve_member_information(user_email) 
         if result == "error":
             response_msg={
                         "error":True,

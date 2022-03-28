@@ -3,6 +3,7 @@ from flask_jwt_extended import JWTManager
 from fetch_data import fecth_blueprint
 from authen import auth_blueprint
 from booking import booking_blueprint
+from payment import payment_blueprint
 import config
 
 app=Flask(__name__)
@@ -10,6 +11,8 @@ app.config.from_object(config.DevelopmentConfig)
 app.register_blueprint(fecth_blueprint)
 app.register_blueprint(auth_blueprint)
 app.register_blueprint(booking_blueprint)
+app.register_blueprint(payment_blueprint)
+
 
 app.config["JSON_AS_ASCII"]=False
 app.config["TEMPLATES_AUTO_RELOAD"]=True

@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{url_for('fetch.static',filename='/css/header_footer.css')}}">
     <link rel="stylesheet" href="{{url_for('fetch.static',filename='/css/sign.css')}}">
     <link rel="stylesheet" href="{{url_for('book.static',filename='/css/booking.css')}}">
+    <script src="https://js.tappaysdk.com/tpdirect/v5.8.0"></script>
 </head>
 <body>
     <div class="section-1">
@@ -28,85 +29,87 @@
         <div class="pending-sche-container">
             <div class="pending-sche">
                 <div class="pending-sche-header thick-header">
-                    您好，wayne，待預訂行程如下:
+                   <!-- 您好，wayne，待預訂行程如下:-->
                 </div>
-                <div class="pending-sche-info">
-                    <div class="garbage">
+            </div>     
+        </div>         
+    </div>            
+            <!--<div class="pending-sche-info"> 
+                    <div class="garbage"> 
                         <img src="/static/icon_delete.png"/>
                     </div>
                     <div class="pending-sche-photo">
                         <img src="/static/member.png"/>
                     </div>
                     <div class="pending-sche-detail">
-                        <span class="out-span small-title">台北一日遊 : <span>平安鐘</span></span>
-                        <span class="out-span small-content">日期 : <span>2021-04-23</span></span>
-                        <span class="out-span small-content">時間 : <span>早上九點到下午四點</span></span>
-                        <span class="out-span small-content">費用 : <span>新台幣 2000 元</span></span>
-                        <span class="out-span small-content address">地點 : <span>臺北市 大安區忠孝東路4段大安區忠孝東路4段大安區忠孝東路4段大安區忠孝東路4段</span></span>
+                        <span class="out-span small-title">台北一日遊 : <span id="sight-name"></span></span>
+                        <span class="out-span small-content">日期 : <span id="booking-date"></span></span>
+                        <span class="out-span small-content">時間 : <span id="booking-time"></span></span>
+                        <span class="out-span small-content">費用 : <span id="booking-fee"></span></span>
+                        <span class="out-span small-content address">地點 : <span id="sight-address"></span></span>
                     </div>
-                </div>        
+                </div>       
             </div>    
         </div>
     </div>
-    <div class="seperate"></div>
+    <div class="seperate"></div>  
 
-    <div class="section-3">
+    <div class="section-3">   
         <div class="contact-info-conatiner">
             <div class="contact-info">
                 <div class="contact-header thick-header">
                     您的聯絡資訊
                 </div>    
                 <div class="contact-name">
-                    <sapn>聯絡姓名 : </sapn><input type="text" name="name"/>
+                    <sapn>聯絡姓名 : </sapn><input id="contact-name" type="text" name="name"/>
                 </div>
                 <div class="contact-email">
-                    <sapn>聯絡信箱 : </sapn><input type="text" name="email"/>
+                    <sapn>聯絡信箱 : </sapn><input id="contact-email" type="text" name="email"/>
                 </div>
                 <div class="contact-mobile">
-                    <sapn>手機號碼 : </sapn><input type="text" name="phone"/>
+                    <sapn>手機號碼 : </sapn><input id="contact-number" type="tel" name="phone"/>
                 </div>
                 <div class="reminder">
                     請保持手機暢通，準時到達，導覽人員將用手機與您聯繫，務必留下正確的聯絡方式。
                 </div>
             </div>
         </div> 
-    </div>
+    </div>   
 
-    <div class="seperate"></div>
+    <div class="seperate"></div>  
 
-    <div class="pay">
+    <div class="pay">  
         <div class="payment-info-container">
             <div class="payment-info">
                 <div class="payment-header thick-header">
                     信用卡付款資訊
                 </div>    
-                <div class="card-number">
-                    <sapn>卡片號碼 : </sapn><input id="ccn" type="tel" name="credit-number" pattern="\d*" maxlength="19" placeholder="**** **** **** ****"/>
+                <div class="form-group card-number-group">
+                    <sapn>卡片號碼 : </sapn><span id="cardtype"></span><div class="form-control card-number"></div>
                 </div>
-                <div class="expire">
-                    <sapn>過期時間 : </sapn><input type="text" name="name" pattern="\d*" maxlength="5" placeholder="MM/YY"/>
+                <div class="form-group expiration-date-group">
+                    <sapn>過期時間 : </sapn><div  class="form-control expiration-date" id="tappay-expiration-date"></div>
                 </div>
-                <div class="verify-code">
-                    <sapn>驗證密碼 : </sapn><input type="password" name="verify" type="tel" pattern="\d*" maxlength="4" placeholder="CVV"/>
+                <div class="form-group cvc-group">
+                    <sapn>驗證密碼 : </sapn><div class="form-control cvc"></div>
                 </div>
             </div>
         </div> 
-    </div>
-    <div class="final-payment">
+    </div>  
+    <div class="final-payment">  
         <div class="final-payment-container">
             <div class="final-info">
                 <div class="final-price-info">
                     <div class="final-price">總價 : 新台幣<span> 2000 元</span></div>
-                    <div id="confirm-payment"><span>確認訂購並付款</span></div>
+                    <button id="confirm-payment"><span>確認訂購並付款</span></button>
                 </div>
             </div>
         </div> 
-
-    </div>
+    </div>   -->
     <div class="section-4">
         <span>COPYRIGHT © 2021 台北一日遊</span>
     </div>
-    <script type="text/javascript" src="{{url_for('book.static',filename='/js/validateccn.js')}}"></script>
+    <!--<script type="text/javascript" src="{{url_for('book.static',filename='/js/validateccn.js')}}"></script>-->
     <script type="text/javascript" src="{{url_for('fetch.static',filename='/js/sign.js')}}"></script>
     <script type="text/javascript" src="{{url_for('book.static',filename='/js/booking.js')}}"></script>
 </body>

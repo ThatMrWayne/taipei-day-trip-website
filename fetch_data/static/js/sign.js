@@ -355,6 +355,7 @@ async function sendJWT(jwt){
                 dropdownBox.id="myDropdown";
                 let mailBox = document.createElement('div');
                 mailBox.id = "user-email";
+                mailBox.setAttribute("user-name",result.data.name);//把使用者姓名種在屬性裡
                 mailBox.appendChild(document.createTextNode(`${result.data.email}`));
                 let logoutBtn = document.createElement('div');
                 logoutBtn.id="logout";
@@ -418,18 +419,21 @@ function init_sign(){
                 if(result){
                     //如果jwt通過驗證,才要動態render使用者的預定行程資料
                     console.log(result);
-                    renderUserSchedule(true);
+                    renderUserSchedule(true); //看booking.js檔
                 }
             }).catch(()=>{
                 //不好意思頁面載入時發生錯誤
-                renderUserSchedule(false,true);
+                renderUserSchedule(false,true); //看booking.js檔
             });
         }
     }else{  
         init_sign_without_jwt();  
         //沒有jwt,動態render把頁面變成請先登入
         if(window.location.href.split('/').includes("booking")){
-            renderUserSchedule(false,false);
+            renderUserSchedule(false,false); //看booking.js檔
+            setTimeout(function(){
+                window.location.href = '/';
+            },1000);
         }
         
 

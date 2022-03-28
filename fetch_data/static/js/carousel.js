@@ -177,35 +177,24 @@ function init_carousel() {
 
 
 //要去提交行程資料前頁面前要先驗證JWT
-async function validateJWTbeforeBooking(jwt){
+async function validateJWTbeforeBooking(jwt,schedule_data){
     try{
-        let response = await fetch('/api/user',{
-                                     method: 'get',
-                                     headers: {"Authorization" : `Bearer ${jwt}`}
+        let response = await fetch('/api/booking',{
+                                     method: 'post',
+                                     body: schedule_data,
+                                     headers: {"Authorization" : `Bearer ${jwt}`,'Content-Type': 'application/json'}
                                     });
         let result = await response.json();                            
         if(response.ok){
-            //如果jwt驗證ok才可以提交預定行程資料
-            if(result.data!==null){
-               //開始檢查和時間有沒有都勾好     
-               let check_result = confirmDateandTime();
-               if(check_result){ //如果時間日期都有選好,才送出預定行程資料
-                        
-               }
-
-
-
-
-            }else{
-                console.log('JWT已經失效');
-                localStorage.removeItem("JWT");
-                window.location.replace('/');
-            }
-        }else{
-            console.log('有錯誤喔');
+            //如果新增行程ok,轉到booking頁面
+            window.location.href = '/booking';
+        }else if (response.status === 403){
+            console.log('JWT已失效,請重新登入');
             localStorage.removeItem("JWT");
-            window.location.replace('/');
-        };
+            window.location.reload();
+        }else{
+            console.log('伺服器錯誤');
+        }
     }catch(message){
         console.log(`${message}`)
         throw Error('Fetching was not ok!!.')
@@ -225,7 +214,7 @@ function confirmDateandTime(){
     let start_booking = document.getElementById("book-btn");
     let div = document.createElement("div");
     div.classList.add("submit-message");
-    div.style.color = "red";
+    div.style.color = "#448899";
     //日期部分
     let choose_date = new Date(date.value); //選擇的日期
     const choose_date_unixtimestamp = Math.floor(choose_date.getTime() / 1000);
@@ -246,12 +235,39 @@ function confirmDateandTime(){
 }
 
 
+//取得表單資料
+function organizeScheduleData(){
+    let formdata = new FormData(document.querySelector('.schedule-form'));
+    let schedule_data={}
+    for(let pair of formdata.entries()){
+        schedule_data[pair[0]]=pair[1]
+    }
+    if(schedule_data.time==="morning"){
+        schedule_data["price"] = 2000
+    }else{
+        schedule_data["price"] = 2500
+    }
+    let url = window.location.href;
+    let id = url.split('/')[url.split('/').length-1];
+    schedule_data["attractionId"] = Number(id);
+    schedule_data = JSON.stringify(schedule_data); //{"date":"2022-03-25","time":"afternoon","price":2500,"attractionId":3}
+    return schedule_data
+}
+
+
+
+
 function submitBooking(e){
     e.preventDefault();
     //首先第一件事,檢查有無登入
     let jwt = localStorage.getItem("JWT");
     if(jwt){
-        validateJWTbeforeBooking(jwt);
+        check_result = confirmDateandTime();
+        if(check_result){
+            let schedule_data = organizeScheduleData()
+            console.log(schedule_data)
+            validateJWTbeforeBooking(jwt,schedule_data);
+        }    
     }else{ //如果沒有jwt,代表還沒登入,show出登入框
         let bg = showBox(sign.signIn,true,createBack());
         document.body.appendChild(bg);

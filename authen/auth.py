@@ -156,7 +156,6 @@ def handle_get_user_data(request):
     if isinstance(connection,Connection): #如果有順利取得連線
         current_user = get_jwt_identity() #取得存在JWT裡的email資訊
         user_email = json.loads(current_user)["email"]
-        print("目前使用者:",current_user)
         result = connection.retrieve_member_information(user_email) 
         if result == "error":
             response_msg={
@@ -166,7 +165,6 @@ def handle_get_user_data(request):
         elif isinstance(result,dict):
             result["id"] = result["member_id"]
             del result["member_id"]
-            #print(result)
             return jsonify({"data":result}) ,200
     elif connection == "error":
             response_msg={

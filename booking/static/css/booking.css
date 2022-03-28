@@ -182,9 +182,6 @@ div.form-group{
 }
 
 
-/**.payment-info input::-webkit-input-placeholder{
-    font-size: 16px;
-}**/
 
 .contact-info span,.payment-info span{
     vertical-align: middle;
@@ -209,6 +206,8 @@ div.form-group{
     align-items: center;
 }
 .final-price{
+    position: relative;
+    left:-2px;
     text-align: right;
     font-weight: bold;
     line-height: 14px;

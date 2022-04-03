@@ -1,3 +1,4 @@
+from collections import _OrderedDictItemsView
 import mysql.connector
 
 
@@ -145,7 +146,7 @@ class Auth_connection(Connection):
     def confirm_member_information(self,email):
         result, msg = None, None
         cursor = self.cnx.cursor(dictionary=True)
-        query = "SELECT name, email, hash_password FROM members WHERE email=%(email)s"
+        query = "SELECT member_id, email, hash_password FROM members WHERE email=%(email)s"
         input_data = {'email': email}
         try:
             cursor.execute(query, input_data)
@@ -185,6 +186,102 @@ class Auth_connection(Connection):
 
         
 
+class Booking_connection(Connection):
+    def insert_new_schedule(self,member_id,attractionId,date,time,price):
+        result, msg = None, None
+        cursor = self.cnx.cursor(dictionary=True)
+        query = "INSERT INTO schedule VALUES (DEFAULT,%(member_id)s,%(attractionId)s,%(date)s,%(time)s,%(price)s)"
+        input_data = {'member_id': member_id, 'attractionId': attractionId, 'date': date, 'time':time, 'price':price}
+        try:
+            cursor.execute(query, input_data)
+            self.cnx.commit()
+            result = True
+        except mysql.connector.Error as err:
+            print(err)
+            msg = err.msg
+        finally:
+            cursor.close()
+            self.cnx.close()
+            if msg:  #新增行程失敗 
+                return "error"
+            elif result:
+                return True #新增行程成功
 
+    def delete_schedule(self,member_id):
+        result, msg = None, None
+        cursor = self.cnx.cursor(dictionary=True)
+        query = "DELETE FROM schedule WHERE member_id = %(member_id)s"
+        input_data = {'member_id': member_id}
+        try:
+            cursor.execute(query, input_data)
+            self.cnx.commit()
+            result = True
+        except mysql.connector.Error as err:
+            print(err)
+            msg = err.msg
+        finally:
+            cursor.close()
+            self.cnx.close()
+            if msg:  #刪除行程失敗 
+                return "error"
+            elif result:
+                return True #刪除行程成功            
+
+    def retrieve_trip_information(self,member_id):
+        result, msg = None, None
+        cursor = self.cnx.cursor(dictionary=True)
+        query = ("select s1.date,s1.time,s1.price,s1.attractionID,s2.name,s2.address,s3.url"  
+                " from (select date,time,price,attractionID from schedule where member_id = %(member_id)s ) as s1" 
+                " inner join sight as s2 on s1.attractionID = s2.id"  
+                " inner join image as s3 on s1.attractionID = s3.sight_id" 
+                " LIMIT 0,1")
+        input_data = {'member_id': member_id}
+        try:
+            cursor.execute(query, input_data)
+            result = cursor.fetchone()          
+        except mysql.connector.Error as err:
+            print(err)
+            msg = err.msg
+        finally:
+            cursor.close()
+            self.cnx.close()
+            if msg:  #查詢失敗
+                return "error"
+            elif result:
+                return result #查詢成功
+            else:
+                return None    
 
                 
+
+class Order_connection(Connection):
+    def insert_new_order(self,member_id,request_data,status,order_id):
+        result, msg = None, None
+        cursor = self.cnx.cursor(dictionary=True)
+        query = ("INSERT INTO orders VALUES (%(order_id)s,%(member_id)s,%(attractionId)s,%(date)s,%(time)s,%(price)s,"
+                "%(contact_name)s,%(contact_email)s,%(contact_number)s,%(status)s)")
+        input_data = {
+                    'order_id':order_id,   
+                    'member_id': member_id, 
+                    'attractionId': request_data["order"]["trip"]["attraction"]["id"], 
+                    'date': request_data["order"]["trip"]["date"],
+                    'time':request_data["order"]["trip"]["time"],
+                    'price':request_data["order"]["price"],
+                    'contact_name':request_data["order"]["contact"]["name"],
+                    'contact_email':request_data["order"]["contact"]["email"],
+                    'contact_number':request_data["order"]["contact"]["phone"],
+                    'status':status}
+        try:
+            cursor.execute(query, input_data)
+            self.cnx.commit()
+            result = True
+        except mysql.connector.Error as err:
+            print(err)
+            msg = err.msg
+        finally:
+            cursor.close()
+            self.cnx.close()
+            if msg:  #新增訂單失敗 
+                return "error"
+            elif result:
+                return True #新增訂單成功

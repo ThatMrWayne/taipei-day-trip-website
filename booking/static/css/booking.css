@@ -165,29 +165,30 @@
    /** border:1px orange solid;**/
 }
 
-.contact-info input,.payment-info input{
+.contact-info input,div.form-control{
     display: inline-block;
     box-sizing: border-box;
     vertical-align: middle;
     margin: 0px;
     padding: 10px;
-    border: 0.5px dashed pink;
     width:200px;
     height:38px;
     border-radius: 5px;
     border: 1px solid #E8E8E8;
 }
 
-.payment-info input::-webkit-input-placeholder{
-    font-size: 16px;
+div.form-group{
+    margin-bottom: 15px;
 }
+
+
 
 .contact-info span,.payment-info span{
     vertical-align: middle;
     line-height: 13.3px;
 }
 
-.contact-name,.contact-email,.contact-mobile,.card-number,.expire,.verify-code{
+.contact-name,.contact-email,.contact-mobile{
     margin-top: 15px;
     -webkit-margin-collapse: collapse;
 }
@@ -205,6 +206,8 @@
     align-items: center;
 }
 .final-price{
+    position: relative;
+    left:-2px;
     text-align: right;
     font-weight: bold;
     line-height: 14px;
@@ -223,6 +226,13 @@
     border-radius: 5px;
     margin-top: 25px;
 }
+
+#confirm-payment{
+    padding:0px;
+    border-style: solid;
+    border-color: #fff
+}
+
 
 #confirm-payment > span{
     display: block;
@@ -247,6 +257,9 @@
     .pending-sche,.contact-info,.payment-info,.final-info{
         width:95%;
     }
+    .seperate{
+        width:100%;
+    }
 }
 
 @media(max-width:800px){
@@ -260,7 +273,14 @@
     
     }
     .pending-sche-photo{
-        width: 80%;
+        width: 95%;
+    }
+    .garbage{
+        top:auto;
+        bottom:-40px;
+    }
+    .pending-sche-container{
+        padding-bottom: 65px;
     }
 }
 
@@ -268,5 +288,12 @@
     .pending-sche-photo{
         width: 100%;
     }
+
+}
+
+.no-schedule{
+    margin-top: 35px;
+    font-size: 16px;
+    font-weight: normal;
 }
 

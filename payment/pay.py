@@ -13,6 +13,9 @@ from database import db
 from model.connection import Connection
 from datetime import datetime
 import time
+from flask_jwt_extended import decode_token
+from utils import Utils_obj
+from config import PARTNER_KEY
 
 payment = Blueprint('pay',__name__,static_folder='static',static_url_path='/pay')
 
@@ -50,7 +53,7 @@ def handlePayment(request,member_id):
     payload = {}
     payload["prime"] = request_data["prime"]
     #測試,key的東西都會在改位置
-    payload["partner_key"] = "partner_LNbmiGLcXnTGgvNLsy0270dxrxGHRQOkpZiZo3yuuLfLvx0j6mESxUOh" 
+    payload["partner_key"] = PARTNER_KEY 
     payload["merchant_id"] = "123wayne_CTBC"
     payload["amount"] = request_data["order"]["price"]
     payload["details"] = "taipei one day trip"
@@ -62,7 +65,7 @@ def handlePayment(request,member_id):
     #把payload轉成json
     payload = json.dumps(payload)
     #發送
-    headers = {"x-api-key": "partner_LNbmiGLcXnTGgvNLsy0270dxrxGHRQOkpZiZo3yuuLfLvx0j6mESxUOh","Content-Type": "application/json"}
+    headers = {"x-api-key": PARTNER_KEY,"Content-Type": "application/json"}
     res = requests.post(pay_by_prime_url, data=payload, headers=headers)
     #print(res.status_code)
     if res.status_code == requests.codes.ok:#代表打api成功
@@ -116,17 +119,14 @@ def handlePayment(request,member_id):
                     "message":"付款連線失敗"}
         return jsonify(response_msg), 400
 
-    
-
 
 
 
 
 @payment.route('/api/orders',methods=['POST']) #這個route要受jwt保護
-@jwt_required_for_orders()
+#@jwt_required_for_orders()
 def pay():
-    current_user = get_jwt_identity() #取得存在JWT裡的member_id資訊
-    member_id = json.loads(current_user)["id"]
+    member_id = Utils_obj.get_member_id_from_jwt(request) #使用utils物件的靜態方法取得jwt裡的資訊
     result = handlePayment(request,member_id)
     return result
 

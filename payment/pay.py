@@ -76,7 +76,7 @@ def handlePayment(request,member_id):
         if isinstance(connection,Connection): #如果有順利取得連線
             #首先,如果原本會員已經有預定行程,要先刪除原本的行程
             delete_result = connection.delete_schedule(member_id) 
-            if delete_result:   #如果成功刪掉預定行程,就新增訂單
+            if delete_result:   #成功刪掉預定行程,新增訂單
                 connection = db.get_order_cnx()
                 if res["status"]==0: #代表交易成功
                     status= 0

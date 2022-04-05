@@ -1,15 +1,4 @@
-//動態抓取使用者的預定行程顯示出來
 
-//function showUserSchedule(){
-    //按台北一日遊回首頁    
-//    let header = document.querySelector('.header-1');
-//    header.addEventListener('click',()=>{
-//        window.location.href = '/';    
-//    })
-//}
-
-
-//window.addEventListener("load",showUserSchedule);
 
 //渲染booking頁面function
 function renderUserSchedule(flag,network_problem){ //在sign.js 422行

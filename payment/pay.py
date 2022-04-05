@@ -84,9 +84,8 @@ def handlePayment(request,member_id):
                 else:
                     status = 1   
                     msg = "付款失敗" 
-                time.sleep(1)
                 order_id = str(int(datetime.now().timestamp()))    
-                result = connection.insert_new_order(member_id,request_data,status,order_id) #就新增訂單,先用bank_transaction_id當訂單編號,不確定
+                result = connection.insert_new_order(member_id,request_data,status,order_id) #就新增訂單
                 if result == "error":
                     response_msg={
                             "error":True,
@@ -122,6 +121,35 @@ def handlePayment(request,member_id):
 
 
 
+def handle_get_order(orderNumber):
+    if not orderNumber.isdigit():
+        return jsonify({"data":None}), 200
+    else:
+        connection = db.get_order_cnx() #取得訂單相關操作的自定義connection物件
+        if isinstance(connection,Connection): #如果有順利取得連線
+            data = connection.get_order_info(orderNumber)
+            if data == "error":
+                response_msg = {
+                    "error": True,
+                    "message": "Data base failed."}
+                return jsonify(response_msg), 500
+            elif data: 
+                return jsonify(data), 200
+            else:
+                return jsonify({"data":None}), 200    
+        elif connection == "error": #如果沒有順利取得連線
+            response_msg = {
+                    "error": True,
+                    "message": "Data base failed."}
+            return jsonify(response_msg), 500      
+
+
+
+
+
+
+
+
 
 @payment.route('/api/orders',methods=['POST']) #這個route要受jwt保護
 #@jwt_required_for_orders()
@@ -134,6 +162,8 @@ def pay():
 
 
 
-@payment.route('/api/order/{orderNumber}',methods=['GET']) #這個route要受jwt保護
+@payment.route('/api/order/<orderNumber>',methods=['GET']) #這個route要受jwt保護
+@jwt_required_for_orders()
 def get_order(orderNumber):
-    pass
+    order_result = handle_get_order(orderNumber)
+    return order_result

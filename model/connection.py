@@ -285,3 +285,49 @@ class Order_connection(Connection):
                 return "error"
             elif result:
                 return True #新增訂單成功
+
+
+    def get_order_info(self,order_id):
+        result, msg = None, None
+        cursor = self.cnx.cursor(dictionary=True)
+        query = ("select s1.order_id, s1.date,s1.time,s1.price,s1.contact_name,s1.contact_email,s1.contact_number,s1.status,s1.attractionId,s2.address,s2.name,s3.url"  
+                " from (select order_id,date,time,price,contact_name,contact_email,contact_number,status,attractionId from orders where order_id = %(order_id)s ) as s1" 
+                " inner join sight as s2 on s1.attractionID = s2.id"  
+                " inner join image as s3 on s1.attractionID = s3.sight_id" 
+                " LIMIT 0,1")
+        input_data = {'order_id': order_id}
+        try:
+            cursor.execute(query, input_data)
+            result = cursor.fetchone()          
+        except mysql.connector.Error as err:
+            print(err)
+            msg = err.msg
+        finally:
+            cursor.close()
+            self.cnx.close()
+            if msg:  #查詢失敗
+                return "error"
+            elif result:
+                order_data={}
+                order_data["data"]={}
+                order_data["data"]["number"]=str(result["order_id"])
+                order_data["data"]["price"]=result["price"]
+                order_data["data"]["trip"]={
+                    "attraction":{
+                        "id":result["attractionId"],
+                        "name":result["name"],
+                        "address":result['address'],
+                        "image":result["url"]
+                    },
+                    "date":result["date"],
+                    "time":result["time"]
+                }
+                order_data["data"]["contact"]={
+                    "name":result["contact_name"],
+                    "email":result["contact_email"],
+                    "phone":result["contact_number"]
+                }
+                order_data["data"]["status"]=result["status"]
+                return order_data #查詢成功
+            else:
+                return None    

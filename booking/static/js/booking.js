@@ -1,15 +1,15 @@
 //動態抓取使用者的預定行程顯示出來
 
-function showUserSchedule(){
+//function showUserSchedule(){
     //按台北一日遊回首頁    
-    let header = document.querySelector('.header-1');
-    header.addEventListener('click',()=>{
-        window.location.href = '/';    
-    })
-}
+//    let header = document.querySelector('.header-1');
+//    header.addEventListener('click',()=>{
+//        window.location.href = '/';    
+//    })
+//}
 
 
-window.addEventListener("load",showUserSchedule);
+//window.addEventListener("load",showUserSchedule);
 
 //渲染booking頁面function
 function renderUserSchedule(flag,network_problem){ //在sign.js 422行
@@ -376,7 +376,6 @@ function renderUserSchedule(flag,network_problem){ //在sign.js 422行
                             alert('get prime error ' + result.msg)
                             return
                         }else{ //成功取得prime,接著發送到後端
-                            //alert('get prime 成功，prime: ' + result.card.prime) 
                             let payload = {}
                             payload["prime"] =  result.card.prime;
                             //打api要預定行程資料
@@ -397,6 +396,7 @@ function renderUserSchedule(flag,network_problem){ //在sign.js 422行
                                 //console.log(payload);
                                 let req = JSON.stringify(payload); //轉成json格式
                                 sendOrder(req,jwt)
+                                
                             })
                         }
                         
@@ -498,13 +498,9 @@ async function sendOrder(payload,jwt){
                                      headers: {"Authorization" : `Bearer ${jwt}`,'Content-Type': 'application/json'}
                                     });
         let result = await response.json();                            
-        if(response.ok){
-            if(result.data!==null){
-                alert("付款成功")
-                return result
-            }else{
-                return null
-            }  
+        if(response.ok){ //付款完成,不論成功或失敗
+            console.log(result)
+            window.location.href=`/thankyou?number=${result.data.number}`
         }else if (response.status === 403){
             console.log('JWT已失效,請重新登入');
             localStorage.removeItem("JWT");

@@ -410,11 +410,17 @@ function init_sign_without_jwt(){
 
 
 function init_sign(){
+    //按台北一日遊回首頁    
+    let header = document.querySelector('.header-1');
+    header.addEventListener('click',()=>{
+        window.location.href = '/';});
+    
     let jwt = localStorage.getItem("JWT");
     if(jwt){ //如果已經有jwt,加在header上送出request
         let promise = sendJWT(jwt);
-        //處理是在booking頁面下的情況
-        if(window.location.href.split('/').includes("booking")){
+        //處理是在booking頁面下的情況 或 thankyou頁面下
+        let path = window.location.href.split('/')
+        if(path.includes("booking")){
             promise.then((result)=>{
                 if(result){
                     //如果jwt通過驗證,才要動態render使用者的預定行程資料
@@ -425,18 +431,33 @@ function init_sign(){
                 //不好意思頁面載入時發生錯誤
                 renderUserSchedule(false,true); //看booking.js檔
             });
+        }else{
+            promise.then((result)=>{
+                if(result){
+                    //如果jwt通過驗證,顯示定單資料
+                    console.log(result);
+                    renderOrderResult(true); //看thankyou.js檔
+                }
+            }).catch(()=>{
+                //不好意思頁面載入時發生錯誤
+                renderOrderResult(false,true); //看thankyou.js檔
+            }); 
         }
     }else{  
         init_sign_without_jwt();  
-        //沒有jwt,動態render把頁面變成請先登入
-        if(window.location.href.split('/').includes("booking")){
+        //沒有jwt,動態render把頁面變成請先登入 (booking和thankyou頁面)
+        let path = window.location.href.split('/')
+        if( path.includes("booking")){
             renderUserSchedule(false,false); //看booking.js檔
             setTimeout(function(){
                 window.location.href = '/';
             },1000);
+        }else if (path.includes("thankyou")){
+            renderOrderResult(false,false); //看thankyou.js檔
+            setTimeout(function(){
+                window.location.href = '/';
+            },1000);
         }
-        
-
     };
 }    
 

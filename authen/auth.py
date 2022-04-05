@@ -7,13 +7,14 @@ from flask import Blueprint
 from flask import make_response
 from flask import jsonify 
 from flask_jwt_extended import create_access_token
-from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import verify_jwt_in_request
+from flask_jwt_extended import decode_token
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from database import db
 from model.connection import Connection
+from utils import Utils_obj
 
 auth = Blueprint('authen', __name__,static_folder='static',static_url_path='/auth')
 
@@ -154,8 +155,7 @@ def handle_signin(request):
 def handle_get_user_data(request):
     connection = db.get_auth_cnx() #取得驗證登入註冊相關操作的自定義connection物件
     if isinstance(connection,Connection): #如果有順利取得連線
-        current_user = get_jwt_identity() #取得存在JWT裡的email資訊
-        user_email = json.loads(current_user)["email"]
+        user_email = Utils_obj.get_email_from_jwt(request) #使用utils物件的靜態方法取得jwt裡的資訊
         result = connection.retrieve_member_information(user_email) 
         if result == "error":
             response_msg={
@@ -177,7 +177,7 @@ def handle_get_user_data(request):
 
 
 @auth.route('/api/user', methods=["GET","POST","PATCH","DELETE"])
-@jwt_required_for_user()
+#@jwt_required_for_user()
 def user():
     if request.method == "POST": #如果是POST,代表要註冊
         signup_result = handle_signup(request)

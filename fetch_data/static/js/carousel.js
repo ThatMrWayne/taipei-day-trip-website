@@ -157,10 +157,10 @@ function init_carousel() {
         console.log(e)
     });
     //按台北一日遊回首頁
-    let header = document.querySelector('.header-1');
-    header.addEventListener('click',()=>{
-        window.location.href = '/';
-    })
+    //let header = document.querySelector('.header-1');
+    //header.addEventListener('click',()=>{
+    //    window.location.href = '/';
+    //})
     //選上半天下半天價錢會變
     let morning = document.getElementById("choice1");
     let afternoon = document.getElementById("choice2");

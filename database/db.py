@@ -77,6 +77,7 @@ class DataBase():
                 print(err.msg)
             exit(1)
 
+        '''
         #建立members資料表
         cnx = self.cnxpool.get_connection()
         cursor= cnx.cursor()
@@ -122,6 +123,8 @@ class DataBase():
             cursor.close()
             cnx.close()  
 
+         '''    
+
 
 
 
@@ -162,4 +165,5 @@ class DataBase():
             return "error"                      
 
              
-db = DataBase()           
+db = DataBase()      
+   

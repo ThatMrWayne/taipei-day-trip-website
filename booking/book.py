@@ -7,9 +7,11 @@ from flask_jwt_extended import create_access_token
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import verify_jwt_in_request
+from flask_jwt_extended import decode_token
 from functools import wraps
 from database import db
 from model.connection import Connection
+from utils import Utils_obj
 
 booking = Blueprint('book',__name__,static_folder='static',static_url_path='/book')
 
@@ -131,23 +133,27 @@ def jwt_required_for_booking():
     return wrapper
 
 
+def get_identity(request):
+    jwt_token = request.headers.get("AUTHORIZATION").split(" ")[1]
+    t = decode_token(jwt_token)
+    user_id = json.loads(t["sub"])["id"]
+    return user_id
+
+
+
+
 
 @booking.route('/api/booking',methods=['GET','POST','DELETE']) #這個route要受jwt保護
-@jwt_required_for_booking()
+#@jwt_required_for_booking()
 def booking_api():
+    member_id = Utils_obj.get_member_id_from_jwt(request) #使用utils物件的靜態方法取得jwt裡的資訊
     if request.method == "GET":
-        current_user = get_jwt_identity() #取得存在JWT裡的member_id資訊
-        member_id = json.loads(current_user)["id"]
         get_trip_result = getTripInfo(member_id)
         return get_trip_result
     elif request.method == "POST": #如果是post,代表要建立新行程
-        current_user = get_jwt_identity() #取得存在JWT裡的member_id資訊
-        member_id = json.loads(current_user)["id"]
         build_trip_result = buildNewTrip(request,member_id)
         return build_trip_result
     elif request.method == "DELETE":
-        current_user = get_jwt_identity() #取得存在JWT裡的member_id資訊
-        member_id = json.loads(current_user)["id"]
         delete_trip_result = deleteTrip(member_id)
         return delete_trip_result
 

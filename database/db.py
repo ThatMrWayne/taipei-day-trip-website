@@ -9,7 +9,6 @@ from model import Booking_connection
 from model import Order_connection
 
 TABLES = {}
-#先用members,因為website裡面已經有第一階段的member
 TABLES['members'] = (
     "CREATE TABLE IF NOT EXISTS `members` ("
     "  `member_id` bigint NOT NULL AUTO_INCREMENT ,"
@@ -64,7 +63,7 @@ class DataBase():
                 'host': '127.0.0.1',
                 'database': 'website',
                 'raise_on_warnings': True,
-                'time_zone': "+00:00", #連線時將時區以標準時區表示
+                'time_zone': "+00:00", 
                 }
             # create connection
             self.cnxpool = pooling.MySQLConnectionPool(pool_name="tinipool", pool_size=5, **config)
@@ -87,7 +86,7 @@ class DataBase():
             print('ready to execute')
             cursor.execute(table_description)
             print('execute over')
-        except mysql.connector.Error as err: #為啥明明就沒有members還是會跑到這
+        except mysql.connector.Error as err: 
             print(err)
         finally:
             cursor.close()
@@ -126,9 +125,6 @@ class DataBase():
          '''    
 
 
-
-
-    #取得景點相關操作的自定義connection物件
     def get_sight_cnx(self):
         try:
             cnx = self.cnxpool.get_connection()
@@ -137,7 +133,6 @@ class DataBase():
             print(err)
             return "error"
 
-    #取得驗證登入註冊相關操作的自定義connection物件
     def get_auth_cnx(self):
         try:
             cnx = self.cnxpool.get_connection()
@@ -146,7 +141,6 @@ class DataBase():
             print(err)
             return "error"      
 
-    #取得行程相關操作的自定義connection物件
     def get_booking_cnx(self):
         try:
             cnx = self.cnxpool.get_connection()
@@ -155,7 +149,7 @@ class DataBase():
             print(err)
             return "error"   
 
-    #取得訂單相關操作的自定義connection物件
+
     def get_order_cnx(self):
         try:
             cnx = self.cnxpool.get_connection()

@@ -1,14 +1,13 @@
-
-//渲染thankyou頁面function
-function renderOrderResult(flag,network_problem){ //在sign.js 422行
-    if(flag){ //如果是true才要render使用者的資料,打api/order/orderNumber取得該使用者訂單資料
+//render thankyou page function
+function renderOrderResult(flag,network_problem){ //sign.js line 422
+    if(flag){ //if true then render member's info,call api/order/orderNumber
         let url = window.location.href;
         let order_id = Number(url.split('=')[url.split('=').length-1]);
         if(order_id){
             let jwt = localStorage.getItem("JWT");    
             let promise = getOrderInfo(jwt,order_id);
-            promise.then((result)=>{ //拿result去炫染頁面
-                if(result){ //有訂單資料
+            promise.then((result)=>{ 
+                if(result){ 
                     let container = document.querySelector('.order-result');
                     let div1 = document.createElement('div');
                     div1.classList.add('thankyou');
@@ -26,20 +25,20 @@ function renderOrderResult(flag,network_problem){ //在sign.js 422行
                     for(let i=0;i<4;i++){
                         container.appendChild(divs[i])
                     };
-                }else{ //沒有訂單資料,直接導回首頁
+                }else{ //no order,back to index
                     setTimeout(function(){
                         window.location.href = '/';
                     },1000); 
                 }    
             }).catch((message)=>{
-                console.log(message)
+                console.log(message);
             })  
-        }else{ //order_id根本不是數字,直接導回首頁
+        }else{ //order_id is not a number
                 setTimeout(function(){
                 window.location.href = '/';
             },1000);    
         }      
-    }else{ //如果是false,就render顯示“請先登入”或是不好意思載入頁面時發生錯誤"
+    }else{ 
         let section2 = document.querySelector(".section-2");
         let child = document.querySelector('.order-result-container');
         section2.removeChild(child);
@@ -53,7 +52,7 @@ function renderOrderResult(flag,network_problem){ //在sign.js 422行
 }
 
 
-//打api要使用者的訂單資料
+//call api to get order info
 async function getOrderInfo(jwt,order_id){
     try{
         let response = await fetch(`/api/order/${order_id}`,{
@@ -68,7 +67,6 @@ async function getOrderInfo(jwt,order_id){
                 return null
             }  
         }else if (response.status === 403){
-            console.log('JWT已失效,請重新登入');
             localStorage.removeItem("JWT");
             window.location.reload();
         }else{

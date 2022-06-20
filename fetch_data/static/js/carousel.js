@@ -95,7 +95,7 @@ function plugInfo(info){
     transport.appendChild(document.createTextNode(info.transport));
 }
 
-//選擇不同半天價錢會變
+
 function changeFee(){
     let fee = document.getElementById('tour-fee');
     let fee_text = fee.firstChild;
@@ -156,12 +156,6 @@ function init_carousel() {
     }).catch((e) => {
         console.log(e)
     });
-    //按台北一日遊回首頁
-    //let header = document.querySelector('.header-1');
-    //header.addEventListener('click',()=>{
-    //    window.location.href = '/';
-    //})
-    //選上半天下半天價錢會變
     let morning = document.getElementById("choice1");
     let afternoon = document.getElementById("choice2");
     morning.addEventListener('click',changeFee);
@@ -169,14 +163,12 @@ function init_carousel() {
     //按下"開始預定行程"的處理事件
     let start_booking = document.getElementById("book-btn");
     start_booking.addEventListener("click",submitBooking);
-    
-
 }
 
 
 
 
-//要去提交行程資料前頁面前要先驗證JWT
+
 async function validateJWTbeforeBooking(jwt,schedule_data){
     try{
         let response = await fetch('/api/booking',{
@@ -189,7 +181,6 @@ async function validateJWTbeforeBooking(jwt,schedule_data){
             //如果新增行程ok,轉到booking頁面
             window.location.href = '/booking';
         }else if (response.status === 403){
-            console.log('JWT已失效,請重新登入');
             localStorage.removeItem("JWT");
             window.location.reload();
         }else{
@@ -259,16 +250,15 @@ function organizeScheduleData(){
 
 function submitBooking(e){
     e.preventDefault();
-    //首先第一件事,檢查有無登入
+    //檢查有無登入
     let jwt = localStorage.getItem("JWT");
     if(jwt){
         check_result = confirmDateandTime();
         if(check_result){
-            let schedule_data = organizeScheduleData()
-            console.log(schedule_data)
+            let schedule_data = organizeScheduleData();
             validateJWTbeforeBooking(jwt,schedule_data);
         }    
-    }else{ //如果沒有jwt,代表還沒登入,show出登入框
+    }else{ //還沒登入,show登入框
         let bg = showBox(sign.signIn,true,createBack());
         document.body.appendChild(bg);
         pleaseSignIn();

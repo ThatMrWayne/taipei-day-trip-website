@@ -18,7 +18,7 @@ let sign = {
 };
 
 
-//show登入註冊訊息
+//登入註冊訊息
 function showMessage(msg,flag,signup_result){
     if(flag){
         let button = document.getElementById("signbtn");
@@ -58,23 +58,20 @@ function showMessage(msg,flag,signup_result){
             signup_content.style.height = "325px";
             button.after(fail_div);    
         }      
-        
     }    
 }
 
 
-
-//關掉框框
 function closeBox(){
     document.body.classList.toggle("stop-scrolling");
     let bg = document.getElementsByClassName('bg');
     document.body.removeChild(bg[0]);
 };
 
-//框框互換
+
 function switchBox(flag){ 
     let bg = document.getElementsByClassName('bg')[0];
-    //flag true代表有帳戶,false沒有帳戶
+    //flag true means having account,false means not
     if(flag){ 
         let box = document.getElementsByClassName("signupbox")[0];
         bg.removeChild(box);
@@ -86,17 +83,15 @@ function switchBox(flag){
     }
 };
 
-//創造背景,讓頁面無法滑動
+
 function createBack(){
-    //讓頁面無法滑動
     document.body.classList.toggle("stop-scrolling");
-    //創造背景
     let background = document.createElement("div");
     background.className = "bg";
     return background;
 };
 
-//處理送出註冊資訊
+
 async function sendAuthSignUp(data){
     try{
         let response = await fetch('/api/user',{
@@ -105,16 +100,15 @@ async function sendAuthSignUp(data){
                                      headers: { 'Content-Type': 'application/json'}
                                         });
         let result = await response.json();                                
-        if(response.ok){ //200情況下
+        if(response.ok){ 
                 showMessage("註冊成功，請登入",false,true);           
-        }else if(response.status === 400){ //如果是400,有可能是1.email重複 2.註冊信箱或密碼格式錯誤
+        }else if(response.status === 400){ //1.email repeat 2.email or password format wrong
             showMessage(result.message,false,false);
-            //清空信箱和密碼輸入框
             let mail_input = document.querySelector('.email');
             let pass_input = document.querySelector('.pass');
             mail_input.value='';
             pass_input.value=''; 
-        }else if(response.status === 500){ //如果是500,代表伺服器(資料庫)內部錯誤
+        }else if(response.status === 500){ 
             showMessage(result.message,false,false);
         };
     }catch(message){
@@ -123,14 +117,13 @@ async function sendAuthSignUp(data){
     }    
 }
 
-//處理登出事件 
+
 async function handleSignOut(){
     try{
         let response = await fetch('/api/user',{method: 'delete'});
         let result = await response.json();    
         console.log(result);                            
-        if(response.ok){ //200情況下 
-               console.log('登出成功') ;
+        if(response.ok){ 
                localStorage.removeItem('JWT');
                window.location.reload();
         }
@@ -141,62 +134,54 @@ async function handleSignOut(){
 }
 
 
-
-//處理送出登入資訊
 async function sendAuthSignIn(data){
     try{
         let response = await fetch('/api/user',{
-                                     method: 'patch',
+                                     method: 'PATCH',
                                      body: data,
                                      headers: { 'Content-Type': 'application/json'}
                                         });
         let result = await response.json();                                
-        if(response.ok){  //200情況下 
-                //alert('登入成功'); 
-                //把登入成功得到的JWT 存在local storage,這邊要注意的是,fetch回來的response headers object
-                //是iterable 物件,無法直接像plain object取得裡面的東西,要用迭代的方式取得
+        if(response.ok){  
+                //fetchresponse headers object(iterable object)
                 let test = [];
                 response.headers.forEach(function(o){test.push(o)});
                 localStorage.setItem('JWT',test[0]);
                 closeBox();
                 window.location.reload();
-        }else if(response.status === 400){ //代表1.密碼錯誤2.沒有此信箱會員
+        }else if(response.status === 400){ //1.wrong password 2.no this member
                 showMessage(result.message,true,null)
-                //清空輸入框
                 let mail_input = document.querySelector('.email');
                 let pass_input = document.querySelector('.pass');
                 mail_input.value='';
                 pass_input.value=''; 
-        }else if(response.status === 500){ //如果是500,代表伺服器(資料庫)內部錯誤
+        }else if(response.status === 500){ 
                 showMessage(result.message,true,null)
         };
     }catch(message){
         console.log(`${message}`)
         throw Error('Fetching was not ok!!.')
     }    
-
 }
 
 
-//處理註冊事件
+
 function handleSignUp(){
     let email = document.querySelector('.email').value;
     let password = document.querySelector('.pass').value;
     let name = document.querySelector('.name').value;
-    //先在前端驗證看看有沒有確實輸入或輸入正不正確
     if ((!name||!email) || (!password)){
         showMessage('請確實填寫註冊資訊欄位',false,false);
     }else{
         let emailRegex = /^(?!\.{1,2})(?![^\.]*\.{2})(?!.*\.{2}@)(?=[a-zA-Z0-9\.!#\$%&\'\*\+\/=?\^_{\|}~-]+@{1}(?:[A-Za-z\d]+\.{1})+[a-zA-Z]+$)(?!.*@{2,}).*/g;
         let passwordRegex = /^(?=\w{8,16}$)(?=(?:[^A-Z]*[A-Z]){3})(?=[^a-z]*[a-z])(?=[^\d]*\d).*/g;
-        //檢查看格式正不正確
         if(emailRegex.test(email)&&passwordRegex.test(password)){
-            let data = {  //註冊資訊
+            let data = {  
                 "name":name,
                 "email":email,
                 "password":password,
             }
-            let req = JSON.stringify(data); //將註冊資料轉成json格式
+            let req = JSON.stringify(data); 
             sendAuthSignUp(req);
         }else{
             let button = document.getElementById("signbtn");
@@ -228,10 +213,9 @@ function handleSignUp(){
             pass_input.value=''; 
         };
     };
-}
+};
 
 
-//處理登入事件
 function handleSignIn(){
     let email = document.querySelector('.email').value;
     let password = document.querySelector('.pass').value;
@@ -245,41 +229,34 @@ function handleSignIn(){
         let req = JSON.stringify(data); //轉成json格式
         sendAuthSignIn(req);
     }    
-
 }
 
 
-//show出登入/註冊框
-function showBox(obj,flag,background){//flag true代表有帳戶,false沒有帳戶
-    //主要框框
+
+function showBox(obj,flag,background){//flag true meaning having account
     let sign_box = document.createElement("div");
     sign_box.className=obj.box //"signinbox signupbox";
-    //小彩條
     let small_head = document.createElement('div');
     small_head.className = "strip";
     sign_box.appendChild(small_head);
-    //主要內容
     let sign_content = document.createElement("div");
     sign_content.className = "content";
-      //看是登入還是註冊調整高度
     if(flag){
         sign_content.style.height="250px";
     }else{
         sign_content.style.height="307px";
     }
-    //登入,註冊會員帳號＆x圖案
     let head = document.createElement("div");
     head.className = "head";
-    let head_text = document.createTextNode(obj.head_txt);//"登入會員帳號"
+    let head_text = document.createTextNode(obj.head_txt);
     head.appendChild(head_text);
     sign_content.appendChild(head);
     let img = new Image();
     img.src = "/static/icon_close.png";
     img.className="icon-close";
-    //按x關掉框框
     img.addEventListener('click',closeBox);
     head.appendChild(img);
-    //判斷是登入還是註冊(登入true,註冊false),如果是false要新增一欄"輸入姓名"
+    //check signin or signup (signin true, signup false)
     if(!flag){
         let input_name = document.createElement("input");
         input_name.className = "name";
@@ -287,41 +264,34 @@ function showBox(obj,flag,background){//flag true代表有帳戶,false沒有帳�
         input_name.setAttribute("type","text");
         sign_content.appendChild(input_name);
     }
-    //信箱輸入框
     let input_mail = document.createElement("input");
     input_mail.className = "email";
     input_mail.setAttribute("placeholder",obj.mail_txt);
     input_mail.setAttribute("type","text");
     sign_content.appendChild(input_mail);
-    //密碼輸入框
     let input_pass = document.createElement("input");
     input_pass.className = "pass";
     input_pass.setAttribute("placeholder","輸入密碼");
     input_pass.setAttribute("type","password");
     sign_content.appendChild(input_pass);
-    //登入,註冊鈕
     let button = document.createElement("div");
     button.setAttribute("id","signbtn");   
     let button_text = document.createTextNode(obj.btn_txt);
     button.appendChild(button_text);
-    //不管是登入或註冊鈕,在創造出來的時候,就要加上eventlistener,目的是送出ajax到後端驗證的路由
     if(flag){
         button.addEventListener('click',function(){handleSignIn()})
     }else{
         button.addEventListener('click',function(){handleSignUp()})
     };
     sign_content.appendChild(button);
-    //還沒有帳戶or已經有帳戶？
     let goto = document.createElement("div");
     goto.className = obj.destination;
     let goto_text = document.createTextNode(obj.msg);
     goto.appendChild(goto_text);
-     //按下去換框框
     goto.addEventListener("click",function(){
                           switchBox(!flag)
                         });
     sign_content.appendChild(goto);
-    //將主內容放入框框裡
     sign_box.append(sign_content);
     background.appendChild(sign_box);
     return background;
@@ -335,11 +305,9 @@ async function sendJWT(jwt){
                                      method: 'get',
                                      headers: {"Authorization" : `Bearer ${jwt}`}
                                     });
-        let result = await response.json();       
-        //console.log(result)                     
+        let result = await response.json();                          
         if(response.ok){
             if(result.data!==null){
-                //右上角放小頭像
                 let login = document.querySelector('.login');
                 let img  = new Image();
                 img.src="/static/member.png";
@@ -355,7 +323,7 @@ async function sendJWT(jwt){
                 dropdownBox.id="myDropdown";
                 let mailBox = document.createElement('div');
                 mailBox.id = "user-email";
-                mailBox.setAttribute("user-name",result.data.name);//把使用者姓名種在屬性裡
+                mailBox.setAttribute("user-name",result.data.name);
                 mailBox.appendChild(document.createTextNode(`${result.data.email}`));
                 let logoutBtn = document.createElement('div');
                 logoutBtn.id="logout";
@@ -366,12 +334,10 @@ async function sendJWT(jwt){
                 login.appendChild(dropdownBox);
                 return true;
             }else{
-                console.log('JWT已經失效');
                 localStorage.removeItem("JWT");
                 window.location.replace('/');
             }
         }else{
-            console.log('有錯誤喔');
             localStorage.removeItem("JWT");
             window.location.replace('/');
         };
@@ -393,12 +359,10 @@ function init_sign_without_jwt(){
     let signup_btn = document.createElement("span");
     signup_btn.id="signup";
     signup_btn.appendChild(document.createTextNode("註冊"));
-    //按下登入事件
     login_btn.addEventListener('click',function(){
         let bg = showBox(sign.signIn,true,createBack());
         document.body.appendChild(bg);
     });
-     //按下註冊事件
     signup_btn.addEventListener('click',function(){
         let bg = showBox(sign.signUp,false,createBack());
         document.body.appendChild(bg);
@@ -409,51 +373,45 @@ function init_sign_without_jwt(){
 }
 
 
-function init_sign(){
-    //按台北一日遊回首頁    
+function init_sign(){  
     let header = document.querySelector('.header-1');
     header.addEventListener('click',()=>{
         window.location.href = '/';});
     
     let jwt = localStorage.getItem("JWT");
-    if(jwt){ //如果已經有jwt,加在header上送出request
+    if(jwt){ 
         let promise = sendJWT(jwt);
-        //處理是在booking頁面下的情況 或 thankyou頁面下
         let path = window.location.href.split('/')
         if(path.includes("booking")){
             promise.then((result)=>{
                 if(result){
-                    //如果jwt通過驗證,才要動態render使用者的預定行程資料
-                    console.log(result);
-                    renderUserSchedule(true); //看booking.js檔
+                    //jwt pass,render user's booking schedule
+                    renderUserSchedule(true); //in booking.js
                 }
             }).catch(()=>{
-                //不好意思頁面載入時發生錯誤
-                renderUserSchedule(false,true); //看booking.js檔
+                renderUserSchedule(false,true); //in booking.js
             });
         }else{
             promise.then((result)=>{
                 if(result){
-                    //如果jwt通過驗證,顯示定單資料
-                    console.log(result);
-                    renderOrderResult(true); //看thankyou.js檔
+                    //jwt pass,render user's prder
+                    renderOrderResult(true); //in thankyou.js
                 }
             }).catch(()=>{
-                //不好意思頁面載入時發生錯誤
-                renderOrderResult(false,true); //看thankyou.js檔
+                renderOrderResult(false,true); //in thankyou.js
             }); 
         }
     }else{  
         init_sign_without_jwt();  
-        //沒有jwt,動態render把頁面變成請先登入 (booking和thankyou頁面)
+        //no jwt,render page to signin first (booking and thankyou page)
         let path = window.location.href.split('/')
         if( path.includes("booking")){
-            renderUserSchedule(false,false); //看booking.js檔
+            renderUserSchedule(false,false); //in booking.js
             setTimeout(function(){
                 window.location.href = '/';
             },1000);
         }else if (path.includes("thankyou")){
-            renderOrderResult(false,false); //看thankyou.js檔
+            renderOrderResult(false,false); //in thankyou.js
             setTimeout(function(){
                 window.location.href = '/';
             },1000);
@@ -462,7 +420,7 @@ function init_sign(){
 }    
 
 
-//要去booking頁面前要先驗證JWT
+//before into jwt
 async function validateJWT(jwt){
     try{
         let response = await fetch('/api/user',{
@@ -471,16 +429,13 @@ async function validateJWT(jwt){
                                     });
         let result = await response.json();                            
         if(response.ok){
-            //如果jwt驗證ok才可以去booking.html頁面
             if(result.data!==null){
                window.location.href="/booking";
             }else{
-                console.log('JWT已經失效');
                 localStorage.removeItem("JWT");
                 window.location.replace('/');
             }
         }else{
-            console.log('有錯誤喔');
             localStorage.removeItem("JWT");
             window.location.replace('/');
         };
@@ -490,7 +445,7 @@ async function validateJWT(jwt){
     }    
 } 
 
-//在登入框按鈕下方show請先登入
+
 function pleaseSignIn(){
     let button = document.getElementById("signbtn");
     let signin_content = document.querySelector(".content");
@@ -502,20 +457,19 @@ function pleaseSignIn(){
 }
 
 
-//按下預定行程的事件處理
+
 function handleBooking(){
-    //要按預定行程,要先確認有沒有登入
     let jwt = localStorage.getItem("JWT");
     if(jwt){
         validateJWT(jwt);
-    }else{ //如果沒有jwt,代表還沒登入,show出登入框
+    }else{
         let bg = showBox(sign.signIn,true,createBack());
         document.body.appendChild(bg);
         pleaseSignIn();
     }
 }
 
-//註冊"預定行程"事件
+//"預定行程"event
 function init_booking(){
     let booking_schedule = document.querySelector(".schedule");
     booking_schedule.addEventListener("click",handleBooking);

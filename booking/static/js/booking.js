@@ -1,17 +1,14 @@
 
-
-//渲染booking頁面function
-function renderUserSchedule(flag,network_problem){ //在sign.js 422行
-    if(flag){ //如果是true才要render使用者的資料,打api/booking取得該使用者預定行程資料
+//render booking page function
+function renderUserSchedule(flag,network_problem){ //sign.js line 422
+    if(flag){ //if true then render member's info,call api/booking
         let jwt = localStorage.getItem("JWT");    
         let promise = getMemberTripInfo(jwt);
-        promise.then((result)=>{ //拿result去炫染頁面
-            //加上姓名
+        promise.then((result)=>{ //use result to render 
             let user_name = document.getElementById('user-email').getAttribute("user-name");
             let hello_header = document.querySelector('.pending-sche-header');
             hello_header.appendChild(document.createTextNode(`您好，${user_name}，待預訂行程如下:`));
-            if(result){ //有預定行程
-                //爆炸
+            if(result){ //there is booked schedule
                 let pending_sche_info = document.createElement("div"); //class=pending-sche-info
                 pending_sche_info.classList.add("pending-sche-info");
                 let garbage = document.createElement("div"); //class=garbage
@@ -21,7 +18,6 @@ function renderUserSchedule(flag,network_problem){ //在sign.js 422行
                 garbage.appendChild(icon_delete);
                 garbage.addEventListener('click',deleteTrip); //綁定刪除行程鈕
                 pending_sche_info.appendChild(garbage);
-                //加上圖片
                 let pending_sche_photo = document.createElement("div");
                 pending_sche_photo.classList.add("pending-sche-photo");
                 let img = new Image();
@@ -52,17 +48,14 @@ function renderUserSchedule(flag,network_problem){ //在sign.js 422行
                 span5.classList.add("small-content");
                 span5.classList.add("address");
                 span5.appendChild(document.createTextNode("地點 : "));
-                 //加上景點名稱
                 let span1_1 = document.createElement("span");
                 span1_1.id = "sight-name";
                 span1_1.appendChild(document.createTextNode(`${result.data.attraction.name}`));
                 span1.appendChild(span1_1);
-                //加上預定日期
                 let span2_1 = document.createElement("span");
                 span2_1.id = "booking-date";
                 span2_1.appendChild(document.createTextNode(`${result.data.date}`));
                 span2.appendChild(span2_1);
-                //加上預定時間 
                 let span3_1 = document.createElement("span");
                 span3_1.id = "booking-time";
                 if(result.data.time==="morning"){
@@ -71,17 +64,14 @@ function renderUserSchedule(flag,network_problem){ //在sign.js 422行
                     span3_1.appendChild(document.createTextNode("下午1點到4點"))
                 }   
                 span3.appendChild(span3_1);
-                //加上費用
                 let span4_1 = document.createElement("span");
                 span4_1.id = "booking-fee";
                 span4_1.appendChild(document.createTextNode(`新台幣 ${result.data.price} 元`));
                 span4.appendChild(span4_1);
-                //加上地址
                 let span5_1 = document.createElement("span");
                 span5_1.id = "sight-address";
                 span5_1.appendChild(document.createTextNode(`${result.data.attraction.address}`));
                 span5.appendChild(span5_1);
-                //最後都加回去
                 pending_sche_detail.appendChild(span1);
                 pending_sche_detail.appendChild(span2);
                 pending_sche_detail.appendChild(span3);
@@ -91,11 +81,8 @@ function renderUserSchedule(flag,network_problem){ //在sign.js 422行
                 //pending-sche
                 let pending_sche = document.querySelector('.pending-sche');
                 pending_sche.appendChild(pending_sche_info);
-                //分隔線
                 let sep1 = document.createElement("div");
                 sep1.classList.add("seperate");
-                
-                //聯絡資訊
                 let section_3 = document.createElement("div");
                 section_3.classList.add("section-3");
                 let contact_info_conatiner = document.createElement("div");
@@ -107,7 +94,6 @@ function renderUserSchedule(flag,network_problem){ //在sign.js 422行
                 contact_header.classList.add("thick-header");
                 contact_header.appendChild(document.createTextNode("您的聯絡資訊"));
                 contact_info.appendChild(contact_header);
-                //聯絡姓名
                 let contact_name = document.createElement("div");
                 contact_name.classList.add("contact-name");
                 let contact_name_span = document.createElement("span");
@@ -120,7 +106,7 @@ function renderUserSchedule(flag,network_problem){ //在sign.js 422行
                 contact_name.appendChild(contact_name_span);
                 contact_name.appendChild(contact_name_input);
                 contact_info.appendChild(contact_name);
-                //聯絡信箱
+                //email
                 let contact_email = document.createElement("div");
                 contact_email.classList.add("contact-email");
                 let contact_email_span = document.createElement("span");
@@ -133,7 +119,7 @@ function renderUserSchedule(flag,network_problem){ //在sign.js 422行
                 contact_email.appendChild(contact_email_span);
                 contact_email.appendChild(contact_email_input);
                 contact_info.appendChild(contact_email);
-                //聯絡手機
+                //mobile number
                 let contact_mobile = document.createElement("div");
                 contact_mobile.classList.add("contact-mobile");
                 let contact_mobile_span = document.createElement("span");
@@ -150,16 +136,10 @@ function renderUserSchedule(flag,network_problem){ //在sign.js 422行
                 reminder.classList.add("reminder");
                 reminder.appendChild(document.createTextNode("請保持手機暢通，準時到達，導覽人員將用手機與您聯繫，務必留下正確的聯絡方式。"));
                 contact_info.appendChild(reminder);
-                //
                 contact_info_conatiner.appendChild( contact_info);
                 section_3.appendChild(contact_info_conatiner);
-                
-
-                //分隔線
                 let sep2 = document.createElement("div");
                 sep2.classList.add("seperate");
-                
-
                 //class = pay
                 let pay = document.createElement("div");
                 pay.classList.add("pay");
@@ -172,7 +152,7 @@ function renderUserSchedule(flag,network_problem){ //在sign.js 422行
                 payment_header.classList.add("thick-header");
                 payment_header.appendChild(document.createTextNode("信用卡付款資訊"));
                 payment_info.appendChild(payment_header);
-                //卡片號碼
+                //card number
                 let card_number_group = document.createElement("div");
                 card_number_group.classList.add("form-group");
                 card_number_group.classList.add("card-number-group");
@@ -187,7 +167,7 @@ function renderUserSchedule(flag,network_problem){ //在sign.js 422行
                 card_number_group.appendChild(card_type);
                 card_number_group.appendChild(card_number);
                 payment_info.appendChild(card_number_group);
-                //過期時間
+                //expiration time
                 let expiration_date_group = document.createElement("div");
                 expiration_date_group.classList.add("form-group");
                 expiration_date_group.classList.add("expiration-date-group");
@@ -200,7 +180,7 @@ function renderUserSchedule(flag,network_problem){ //在sign.js 422行
                 expiration_date_group.appendChild(span_expiration);
                 expiration_date_group.appendChild(expiration_date);
                 payment_info.appendChild(expiration_date_group);
-                //驗證密碼
+                //verify password
                 let cvc_group = document.createElement("div");
                 cvc_group.classList.add("form-group");
                 cvc_group.classList.add("cvc-group");
@@ -212,7 +192,6 @@ function renderUserSchedule(flag,network_problem){ //在sign.js 422行
                 cvc_group.appendChild(span_cvc);
                 cvc_group.appendChild(cvc);
                 payment_info.appendChild(cvc_group);
-                //
                 payment_info_container.appendChild(payment_info);
                 pay.appendChild(payment_info_container);
                 //class=final-payment
@@ -240,7 +219,6 @@ function renderUserSchedule(flag,network_problem){ //在sign.js 422行
                 final_info.appendChild(final_price_info);
                 final_payment_container.appendChild(final_info);
                 final_payment.appendChild(final_payment_container);
-                //接起來
                 let section2 = document.querySelector(".section-2");
                 section2.after(sep1);
                 sep1.after(section_3);
@@ -364,13 +342,13 @@ function renderUserSchedule(flag,network_problem){ //在sign.js 422行
                         if (result.status !== 0) {
                             alert('get prime error ' + result.msg)
                             return
-                        }else{ //成功取得prime,接著發送到後端
+                        }else{ //successfullt get prime 
                             let payload = {}
                             payload["prime"] =  result.card.prime;
-                            //打api要預定行程資料
+                            //get booked schedule info
                             let jwt = localStorage.getItem("JWT");    
                             let promise = getMemberTripInfo(jwt);
-                            promise.then((result)=>{ //整理要Post的payload
+                            promise.then((result)=>{ 
                                 payload["order"] = {};
                                 payload["order"]["price"] = result["data"]["price"];
                                 payload["order"]["trip"] = result["data"];
@@ -382,7 +360,6 @@ function renderUserSchedule(flag,network_problem){ //在sign.js 422行
                                 payload["order"]["contact"]["name"] = contact_name;
                                 payload["order"]["contact"]["email"] = contact_email;
                                 payload["order"]["contact"]["phone"] = contact_number;
-                                //console.log(payload);
                                 let req = JSON.stringify(payload); //轉成json格式
                                 sendOrder(req,jwt)
                                 
@@ -392,7 +369,7 @@ function renderUserSchedule(flag,network_problem){ //在sign.js 422行
                     })
                 })
 
-            }else{ //沒有預定行程
+            }else{ 
                 let div = document.createElement("div");
                 div.appendChild(document.createTextNode("目前沒有任何待預定的行程"));
                 div.classList.add('no-schedule');
@@ -402,7 +379,7 @@ function renderUserSchedule(flag,network_problem){ //在sign.js 422行
         }).catch((message)=>{
             console.log(message)
         })    
-    }else{ //如果是false,就render顯示“請先登入”或是不好意思載入頁面時發生錯誤"
+    }else{ //if false, show message
         let section2 = document.querySelector(".section-2");
         let child = document.querySelector('.pending-sche-container');
         section2.removeChild(child);
@@ -417,7 +394,7 @@ function renderUserSchedule(flag,network_problem){ //在sign.js 422行
 
 
 
-//打api要使用者的預定行程資料
+
 async function getMemberTripInfo(jwt){
     try{
         let response = await fetch('/api/booking',{
@@ -432,7 +409,6 @@ async function getMemberTripInfo(jwt){
                 return null
             }  
         }else if (response.status === 403){
-            console.log('JWT已失效,請重新登入');
             localStorage.removeItem("JWT");
             window.location.reload();
         }else{
@@ -444,7 +420,7 @@ async function getMemberTripInfo(jwt){
     }    
 }
 
-//打api刪除使用者的預定行程資料
+//delete member's booked shcedule 
 async function deleteTrip(){
     let jwt = localStorage.getItem("JWT"); 
     try{
@@ -452,7 +428,7 @@ async function deleteTrip(){
                                      method: 'delete',
                                      headers: {"Authorization" : `Bearer ${jwt}`}
                                     });                           
-        if(response.ok){ //代表成功刪除
+        if(response.ok){ 
             window.location.reload();
         }else{
             console.log('伺服器錯誤');
@@ -487,11 +463,9 @@ async function sendOrder(payload,jwt){
                                      headers: {"Authorization" : `Bearer ${jwt}`,'Content-Type': 'application/json'}
                                     });
         let result = await response.json();                            
-        if(response.ok){ //付款完成,不論成功或失敗
-            console.log(result)
+        if(response.ok){ //done paying,no matter success or fail
             window.location.href=`/thankyou?number=${result.data.number}`
         }else if (response.status === 403){
-            console.log('JWT已失效,請重新登入');
             localStorage.removeItem("JWT");
             window.location.reload();
         }else{
@@ -501,9 +475,4 @@ async function sendOrder(payload,jwt){
         console.log(`${message}`)
         throw Error('Fetching was not ok!!.')
     }    
-
-
-
-
-
 }

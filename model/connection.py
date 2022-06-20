@@ -1,4 +1,3 @@
-from collections import _OrderedDictItemsView
 import mysql.connector
 
 
@@ -12,10 +11,8 @@ class Sight_connection(Connection):
 
     def get_attrac_page(self,page,keyword=None):
         msg,sight_data,nextPage = None,None,None
-        #如果沒有給Page 視為0
         if not page:
             page = 0       
-
         cursor= self.cnx.cursor(dictionary=True)
         try:
             if keyword:
@@ -23,13 +20,13 @@ class Sight_connection(Connection):
                 "(SELECT * FROM sight WHERE name LIKE CONCAT('%',%(key)s,'%') ORDER BY id LIMIT %(st)s,13) AS s1 "
                 "INNER JOIN image AS s2 ON s1.id = s2.sight_id")
                 cursor.execute(keyword_query,{'key':keyword,'st':int(page)*12})
-                sight_data = cursor.fetchall() #可能是空的[]
+                sight_data = cursor.fetchall() #might be empty[]
             else:
                 normal_query = ("SELECT s1.* , s2.url AS images from "
                 "(SELECT * FROM sight ORDER BY id LIMIT %(st)s,13) AS s1 "
                 "INNER JOIN image AS s2 ON s1.id = s2.sight_id")
                 cursor.execute(normal_query,{'st':int(page)*12})
-                sight_data = cursor.fetchall() #可能是空的[]    
+                sight_data = cursor.fetchall() #might be empty[]    
 
             if sight_data:
                 final = []
@@ -48,7 +45,7 @@ class Sight_connection(Connection):
             else:
                 final=[]
 
-            #查看有沒有下一頁
+            #check next page
             try:
                 next_item = final[12]
                 nextPage = int(page)+1
@@ -57,10 +54,9 @@ class Sight_connection(Connection):
 
             result={
                     "nextPage":nextPage,
-                    "data":final[:12] #回傳前12筆就好
+                    "data":final[:12] #retur first 12 data
                     }  
         except mysql.connector.Error as err:
-            print(err)
             msg = err.msg      
         finally:
             cursor.close()
@@ -72,7 +68,6 @@ class Sight_connection(Connection):
 
     def get_attrac_by_id(self,attractionid):
         msg,result = None,None
-
         cursor = self.cnx.cursor(dictionary=True)
         try:
             query = "SELECT * FROM sight WHERE id = %(attracId)s"
@@ -90,7 +85,6 @@ class Sight_connection(Connection):
             else:
                 result={'data':[]}        
         except mysql.connector.Error as err:
-            print(err)
             msg = err.msg
         finally:
             cursor.close()
@@ -110,7 +104,6 @@ class Auth_connection(Connection):
             cursor.execute(query, {'email': email})
             result = cursor.fetchone()
         except mysql.connector.Error as err:
-            print(err)
             msg = err.msg
         finally:
             cursor.close()
@@ -132,15 +125,14 @@ class Auth_connection(Connection):
             self.cnx.commit()
             result = True
         except mysql.connector.Error as err:
-            print(err)
             msg = err.msg
         finally:
             cursor.close()
             self.cnx.close()
-            if msg:  #新增會員失敗  
+            if msg:   
                 return "error"
             elif result:
-                return True #新增會員成功
+                return True
 
 
     def confirm_member_information(self,email):
@@ -152,17 +144,16 @@ class Auth_connection(Connection):
             cursor.execute(query, input_data)
             result = cursor.fetchone()          
         except mysql.connector.Error as err:
-            print(err)
             msg = err.msg
         finally:
             cursor.close()
             self.cnx.close()
-            if msg:  #查詢失敗
+            if msg:  
                 return "error"
             elif result:
-                return result #有此會員
+                return result 
             else:
-                return False #根本沒有這個會員      
+                return False       
 
     def retrieve_member_information(self,email):
         result, msg = None, None
@@ -173,15 +164,14 @@ class Auth_connection(Connection):
             cursor.execute(query, input_data)
             result = cursor.fetchone()          
         except mysql.connector.Error as err:
-            print(err)
             msg = err.msg
         finally:
             cursor.close()
             self.cnx.close()
-            if msg:  #查詢失敗
+            if msg:  
                 return "error"
             elif result:
-                return result #查詢成功
+                return result 
  
 
         
@@ -197,15 +187,14 @@ class Booking_connection(Connection):
             self.cnx.commit()
             result = True
         except mysql.connector.Error as err:
-            print(err)
             msg = err.msg
         finally:
             cursor.close()
             self.cnx.close()
-            if msg:  #新增行程失敗 
+            if msg:  
                 return "error"
             elif result:
-                return True #新增行程成功
+                return True 
 
     def delete_schedule(self,member_id):
         result, msg = None, None
@@ -217,15 +206,14 @@ class Booking_connection(Connection):
             self.cnx.commit()
             result = True
         except mysql.connector.Error as err:
-            print(err)
             msg = err.msg
         finally:
             cursor.close()
             self.cnx.close()
-            if msg:  #刪除行程失敗 
+            if msg:  
                 return "error"
             elif result:
-                return True #刪除行程成功            
+                return True             
 
     def retrieve_trip_information(self,member_id):
         result, msg = None, None
@@ -240,15 +228,14 @@ class Booking_connection(Connection):
             cursor.execute(query, input_data)
             result = cursor.fetchone()          
         except mysql.connector.Error as err:
-            print(err)
             msg = err.msg
         finally:
             cursor.close()
             self.cnx.close()
-            if msg:  #查詢失敗
+            if msg:  
                 return "error"
             elif result:
-                return result #查詢成功
+                return result 
             else:
                 return None    
 
@@ -276,7 +263,6 @@ class Order_connection(Connection):
             self.cnx.commit()
             result = True
         except mysql.connector.Error as err:
-            print(err)
             msg = err.msg
         finally:
             cursor.close()
@@ -300,12 +286,11 @@ class Order_connection(Connection):
             cursor.execute(query, input_data)
             result = cursor.fetchone()          
         except mysql.connector.Error as err:
-            print(err)
             msg = err.msg
         finally:
             cursor.close()
             self.cnx.close()
-            if msg:  #查詢失敗
+            if msg:  
                 return "error"
             elif result:
                 order_data={}
@@ -328,6 +313,6 @@ class Order_connection(Connection):
                     "phone":result["contact_number"]
                 }
                 order_data["data"]["status"]=result["status"]
-                return order_data #查詢成功
+                return order_data 
             else:
                 return None    

@@ -1,0 +1,299 @@
+/**section2部份**/
+.section-2{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top:60px;
+    /**border: 2px solid red;**/
+    color: #666666;
+}
+
+.pending-sche-container{
+    box-sizing: border-box;
+    width:1200px;
+    flex:none;
+    /*height不用設*/
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 46px;
+    padding-bottom: 40px;
+   /** border:1px purple dashed;  **/
+}
+
+.pending-sche{
+    flex: none;
+    box-sizing: border-box;
+    width: 990px;
+   /** border:2px yellow dashed; **/
+}
+
+.thick-header{
+    font-size: 19px;
+    font-weight: bold;
+}
+
+.pending-sche-header{
+    /**border:1px green solid; **/
+    box-sizing: border-box;
+    margin-bottom: 35px;
+}
+
+.pending-sche-info{
+    position: relative;
+   /** border:1px blue solid; **/
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+
+}
+
+.garbage{
+    position: absolute;
+    right:0px;
+    top:0px;
+    /**border:1px orange solid;**/
+}
+
+.garbage:hover{
+    cursor: pointer;
+}
+
+.pending-sche-photo{
+    box-sizing: border-box;
+    flex: none;
+    width: 266px;
+    aspect-ratio: 1.33;
+    /**border:1px orange solid;**/
+}
+
+.pending-sche-photo > img{
+    display: block;
+    width:100%;
+    height: 100%;
+}
+
+.pending-sche-detail{
+    box-sizing: border-box;
+    flex:auto;
+   /** border:1px orange solid;**/
+    font-size: 16px;
+    font-weight: bold;
+    padding-left: 22px;
+
+}
+
+
+
+.pending-sche-detail .out-span{
+    box-sizing: border-box;
+    display: block;
+    padding:0px;
+    line-height: 14px;
+}
+
+.small-title{
+    color: #448899;
+    margin-bottom: 30px;
+    margin-top: 5px;
+}
+.small-content{
+    margin-top: 20px;
+    -webkit-margin-collapse: collapse;
+}
+
+.small-content > span{
+    font-weight: normal;
+}
+
+
+.pending-sche-detail >span:nth-of-type(5){
+    line-height: 22px;
+    margin-top: 15px;
+
+}
+
+
+
+/*分割線*/
+.seperate{
+    position: relative;
+    border: 0.5px #E8E8E8 solid;
+    width:1200px;
+    left:50%;
+    transform: translateX(-50%);
+}
+
+
+/**section3和pay和最後總價部份**/
+.section-3,.pay,.final-payment{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /**border: 2px solid red;**/
+    color: #666666;
+}
+
+.contact-info-conatiner,.payment-info-container,.final-payment-container{
+    box-sizing: border-box;
+    width:1200px;
+    flex:none;
+    /*height不用設*/
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 44px;
+    padding-bottom: 45px;
+    /**border:1px purple dashed;  **/
+}
+
+.contact-info,.payment-info,.final-info{
+    flex: none;
+    box-sizing: border-box;
+    width: 990px;
+   /** border:2px yellow dashed;**/ 
+}
+
+.contact-header,.payment-header{
+    margin-bottom: 24px;
+}
+
+
+.contact-info > div,.payment-info > div{
+    box-sizing: border-box;
+   /** border:1px orange solid;**/
+}
+
+.contact-info input,div.form-control{
+    display: inline-block;
+    box-sizing: border-box;
+    vertical-align: middle;
+    margin: 0px;
+    padding: 10px;
+    width:200px;
+    height:38px;
+    border-radius: 5px;
+    border: 1px solid #E8E8E8;
+}
+
+div.form-group{
+    margin-bottom: 15px;
+}
+
+
+
+.contact-info span,.payment-info span{
+    vertical-align: middle;
+    line-height: 13.3px;
+}
+
+.contact-name,.contact-email,.contact-mobile{
+    margin-top: 15px;
+    -webkit-margin-collapse: collapse;
+}
+
+.reminder{
+    margin-top: 20px;
+    font-weight: bold;
+    word-wrap: break-word;
+}
+
+
+.final-info{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+.final-price{
+    position: relative;
+    left:-2px;
+    text-align: right;
+    font-weight: bold;
+    line-height: 14px;
+
+}
+#confirm-payment{
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width:173px;
+    height: 36px;
+    font-size: 19px;
+    color:white;
+    background-color: #448899;
+    border-radius: 5px;
+    margin-top: 25px;
+}
+
+#confirm-payment{
+    padding:0px;
+    border-style: solid;
+    border-color: #fff
+}
+
+
+#confirm-payment > span{
+    display: block;
+    flex: none;
+    margin: 0px;
+    padding: 0px;
+}
+
+#confirm-payment:hover{
+    cursor: pointer;
+}
+
+.final-payment-container{
+    padding-bottom: 62px;
+}
+
+
+@media(max-width:1200px){
+    .pending-sche-container,.contact-info-conatiner,.payment-info-container,.final-payment-container{
+        width:100%;
+    }
+    .pending-sche,.contact-info,.payment-info,.final-info{
+        width:95%;
+    }
+    .seperate{
+        width:100%;
+    }
+}
+
+@media(max-width:800px){
+    .pending-sche-info{
+        align-items:center;
+        flex-wrap: wrap;
+    }
+    .pending-sche-detail{
+        margin-top: 20px;
+        padding-left: 0px;
+    
+    }
+    .pending-sche-photo{
+        width: 95%;
+    }
+    .garbage{
+        top:auto;
+        bottom:-40px;
+    }
+    .pending-sche-container{
+        padding-bottom: 65px;
+    }
+}
+
+@media(max-width:600px){
+    .pending-sche-photo{
+        width: 100%;
+    }
+
+}
+
+.no-schedule{
+    margin-top: 35px;
+    font-size: 16px;
+    font-weight: normal;
+}
+

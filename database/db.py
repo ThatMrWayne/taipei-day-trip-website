@@ -75,54 +75,7 @@ class DataBase():
             else:
                 print(err.msg)
             exit(1)
-
-        '''
-        #建立members資料表
-        cnx = self.cnxpool.get_connection()
-        cursor= cnx.cursor()
-        try:
-            table_description = TABLES['members']
-            print("Creating table : members ")
-            print('ready to execute')
-            cursor.execute(table_description)
-            print('execute over')
-        except mysql.connector.Error as err: 
-            print(err)
-        finally:
-            cursor.close()
-            cnx.close() 
-
-        #建立schedule資料表
-        cnx = self.cnxpool.get_connection()
-        cursor= cnx.cursor()
-        try:
-            table_description = TABLES['schedule']
-            print("Creating table : schedule ")
-            print('ready to execute')
-            cursor.execute(table_description)
-            print('execute over')
-        except mysql.connector.Error as err: 
-            print(err)
-        finally:
-            cursor.close()
-            cnx.close()  
-
-        #建立orders資料表
-        cnx = self.cnxpool.get_connection()
-        cursor= cnx.cursor()
-        try:
-            table_description = TABLES['orders']
-            print("Creating table : orders ")
-            print('ready to execute')
-            cursor.execute(table_description)
-            print('execute over')
-        except mysql.connector.Error as err: 
-            print(err)
-        finally:
-            cursor.close()
-            cnx.close()  
-
-         '''    
+ 
 
 
     def get_sight_cnx(self):

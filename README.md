@@ -37,8 +37,9 @@ This is my first project built from Flask and vanilla Javascript in [WeHelp boot
 - Member system.
 - Search tours by related keyword.
 - Infinite scroll down loading.
-- Tours' image carousel.
-- Online payment by [TapPay](https://www.tappaysdk.com/zh/)  
+- Tours image carousel.
+- Responsive web design.
+- Online payment by [TapPay](https://www.tappaysdk.com/zh/).  
 ## Backend Technique
 
 #### Language / Web Framework

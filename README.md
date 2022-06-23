@@ -1,9 +1,9 @@
 
 # Taipei-day-trip-website
 
-Taipei-day-trip-website is a tourism e-commerce website where users can find and book one-day sightseeing trip in Taipei city.
+Taipei-day-trip-website is a tourism e-commerce webite where users can find and book one-day sightseeing trip in Taipei city.
 
-This is my first project built from Flask and vanilla Javascript in [WeHelp bootcamp](https://training.pada-x.com/wehelp/).
+This is my first project built from Flask and vanilla Javascript in [WeHelp bootcamp](https://training.pada-x.com/wehelp/). 
 
 🖥️ Website URL : https://www.taipeidaytrip.xyz/
 
@@ -71,7 +71,6 @@ This is my first project built from Flask and vanilla Javascript in [WeHelp boot
 - HTML
 - Javascript
 - CSS
-
 
 ## Contact
 
